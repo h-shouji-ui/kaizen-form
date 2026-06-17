@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>カイゼン活動 報告フォーム</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+
+:root{--kp:#0a6858;--kpl:#e0f2ee;--kpm:#1a8c77;--ka:#c97d10;--kal:#fff8ec;--kg:#f0a500;--kb:#d0e6e0;--kt:#1a2e28;--km:#5a7a74}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f0f4f3;color:var(--kt);font-family:'Hiragino Kaku Gothic ProN','Hiragino Sans','Noto Sans JP',Meiryo,sans-serif;font-size:16px;min-height:100vh;padding-bottom:3rem}
+/* Header */
+.app-header{background:var(--kp);padding:.9rem 1.2rem 1rem;box-shadow:0 2px 10px rgba(10,104,88,.3)}
+.hdr-row{display:flex;align-items:center;gap:10px}
+.logo-mark{width:32px;height:32px;background:var(--kg);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:#fff;flex-shrink:0}
+.app-header h1{font-size:16px;font-weight:700;color:#fff;letter-spacing:.03em}
+.app-header p{font-size:11px;color:rgba(255,255,255,.65);margin-top:3px;padding-left:42px;letter-spacing:.04em}
+/* Tabs - overflow scroll so all tabs always visible */
+.tab-switcher{display:flex;overflow-x:auto;background:#fff;border-bottom:2px solid var(--kb);-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tab-switcher::-webkit-scrollbar{display:none}
+.tab-btn{flex:0 0 auto;border:none;background:#f4f6f5;padding:.85rem 1rem;font-size:13px;font-weight:600;color:var(--km);cursor:pointer;display:flex;align-items:center;gap:6px;border-bottom:3px solid transparent;white-space:nowrap;min-width:33.33%;-webkit-tap-highlight-color:rgba(0,0,0,0);touch-action:manipulation;user-select:none}
+.tab-btn.active{background:#fff;color:var(--kp);border-bottom-color:var(--kp)}
+.tab-btn .t-ic{font-size:17px}
+/* Panels */
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+/* Forms */
+.fw{max-width:600px;margin:0 auto;padding:1.1rem 1rem}
+.sc{background:#fff;border-radius:14px;border:1px solid var(--kb);margin-bottom:1rem;overflow:hidden}
+.sh{background:var(--kpl);border-bottom:1px solid var(--kb);padding:.65rem 1rem;display:flex;align-items:center;gap:8px}
+.sh .si{font-size:17px;line-height:1}
+.sh .st{font-size:12.5px;font-weight:700;color:var(--kp);letter-spacing:.05em;text-transform:uppercase}
+.sb{padding:1rem}
+.fl{font-size:13.5px;font-weight:600;color:var(--kt);margin-bottom:5px;display:block}
+.fl .req{color:#c0392b;margin-left:3px;font-size:12px}
+.fh{font-size:11.5px;color:var(--km);margin-bottom:6px;display:block;line-height:1.5}
+.form-control,.form-select{font-size:15px;padding:.7rem .9rem;border:1.5px solid #c8dbd7;border-radius:10px;background:#fafffe;color:var(--kt);transition:border-color .2s,box-shadow .2s;width:100%}
+.form-control:focus,.form-select:focus{border-color:var(--kpm);box-shadow:0 0 0 3px rgba(10,104,88,.12);outline:none;background:#fff}
+textarea.form-control{min-height:88px;resize:vertical}
+.mb-f{margin-bottom:1rem}
+.form-control.invalid,.form-select.invalid{border-color:#e74c3c;background:#fff8f8}
+.err-msg{font-size:12px;color:#c0392b;margin-top:4px;display:none}
+.err-msg.show{display:block}
+/* Photo */
+.photo-zone{border:2px dashed var(--kb);border-radius:12px;padding:1.2rem 1rem;text-align:center;background:#f7fdfb;cursor:pointer}
+.ph-ic{font-size:30px;margin-bottom:5px}
+.ph-lb{font-size:14px;font-weight:600;color:var(--kp)}
+.ph-sb{font-size:12px;color:var(--km);margin-top:2px}
+.photo-prev{display:none;margin-top:10px}
+.photo-prev img{width:100%;border-radius:10px;border:1.5px solid var(--kb)}
+.photo-retake{margin-top:8px;font-size:13px;color:var(--km);background:none;border:1px solid var(--kb);border-radius:8px;padding:5px 14px;cursor:pointer}
+/* Freq chips */
+.freq-scroll-box{display:flex;flex-wrap:wrap;gap:8px;padding:4px 0 8px}
+.freq-chip{width:56px;height:52px;border-radius:12px;border:1.5px solid #c8dbd7;background:#fafffe;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;font-size:14px;font-weight:700;color:var(--kt);transition:border-color .15s,background .15s,color .15s;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none}
+.freq-chip .fc-unit{font-size:10px;font-weight:400;color:var(--km);margin-top:1px}
+.freq-chip.selected{border-color:var(--kp);background:var(--kp);color:#fff}
+.freq-chip.selected .fc-unit{color:rgba(255,255,255,.75)}
+/* Preview card */
+.cp-card{background:var(--kal);border:1.5px solid #f5d9a0;border-radius:12px;padding:.85rem 1rem;margin-bottom:1rem}
+.cp-title{font-size:12px;font-weight:700;color:var(--ka);letter-spacing:.06em;text-transform:uppercase;margin-bottom:8px}
+.c-row{display:flex;justify-content:space-between;align-items:baseline;padding:4px 0;font-size:14px;border-bottom:1px dashed #f0d090}
+.c-row:last-child{border-bottom:none}
+.cr-l{color:var(--km);font-size:13px}.cr-v{font-weight:700;color:var(--kt)}
+/* Result */
+.rs-box{background:linear-gradient(135deg,#0a6858 0%,#0d8c74 100%);border-radius:16px;padding:1.4rem 1.2rem;text-align:center;margin-bottom:1rem;position:relative;overflow:hidden}
+.rs-label{font-size:12.5px;color:rgba(255,255,255,.75);letter-spacing:.08em;margin-bottom:4px}
+.rs-amount{font-size:40px;font-weight:700;color:#fff;letter-spacing:-1px;line-height:1.1}
+.rs-unit{font-size:21px;font-weight:600;margin-left:2px}
+.rs-badge{display:inline-block;background:var(--kg);color:#fff;font-size:11.5px;font-weight:700;padding:3px 12px;border-radius:20px;margin-top:8px;letter-spacing:.04em}
+.rs-badge.neg{background:#c0392b}.rs-badge.zero{background:var(--km)}
+@keyframes goldShimmer{0%{text-shadow:0 0 0 transparent}35%{text-shadow:0 0 22px rgba(240,165,0,.8),0 0 50px rgba(240,165,0,.35)}100%{text-shadow:0 0 0 transparent}}
+.shimmer-on .rs-amount{animation:goldShimmer 2.2s ease forwards;color:var(--kg)}
+.rs-bkd{background:#fff;border-radius:12px;border:1px solid var(--kb);overflow:hidden;margin-bottom:1rem}
+.rs-bkd-row{display:flex;justify-content:space-between;align-items:center;padding:.6rem 1rem;font-size:14px;border-bottom:1px solid #edf4f2}
+.rs-bkd-row:last-child{border-bottom:none}
+.rs-bkd-row.total{background:var(--kpl);font-weight:700;font-size:15px}
+.rb-l{color:var(--km)}.rb-v{font-weight:600;color:var(--kt)}.rb-v.p{color:#0a6858}.rb-v.m{color:#c0392b}
+/* Submit */
+.submit-btn{display:block;width:100%;padding:1rem;background:var(--kp);color:#fff;border:none;border-radius:14px;font-size:17px;font-weight:700;letter-spacing:.06em;cursor:pointer;transition:background .2s,transform .1s;box-shadow:0 4px 16px rgba(10,104,88,.3);margin-top:.5rem}
+.submit-btn:active{transform:scale(.98)}
+.submit-btn.accent{background:var(--ka);box-shadow:0 4px 16px rgba(201,125,16,.35)}
+.info-banner{background:var(--kpl);border-left:4px solid var(--kp);border-radius:0 8px 8px 0;padding:.6rem .9rem;font-size:13px;color:var(--kp);margin-bottom:1rem;line-height:1.5}
+/* Success modal */
+.modal-backdrop{display:none;position:fixed;inset:0;background:rgba(10,40,35,.55);z-index:9999;align-items:center;justify-content:center;padding:1.5rem}
+.modal-backdrop.show{display:flex}
+.modal-box{background:#fff;border-radius:20px;padding:2rem 1.5rem 1.5rem;max-width:360px;width:100%;text-align:center;animation:popIn .35s cubic-bezier(.34,1.56,.64,1)}
+@keyframes popIn{from{transform:scale(.85);opacity:0}to{transform:scale(1);opacity:1}}
+.modal-icon{font-size:52px;line-height:1;margin-bottom:.5rem}
+.modal-title{font-size:19px;font-weight:700;color:var(--kt);margin-bottom:.4rem}
+.modal-body{font-size:14px;color:var(--km);line-height:1.6;margin-bottom:1rem}
+.modal-score{font-size:34px;font-weight:700;color:var(--kp);margin:.5rem 0 .1rem}
+.modal-score-unit{font-size:13px;color:var(--km);margin-bottom:1rem}
+.modal-btn-primary{display:block;width:100%;padding:.85rem;background:var(--kp);color:#fff;border:none;border-radius:12px;font-size:15px;font-weight:700;cursor:pointer;margin-bottom:.6rem}
+.modal-btn-secondary{display:block;width:100%;padding:.85rem;background:#f0f4f3;color:var(--km);border:none;border-radius:12px;font-size:15px;font-weight:600;cursor:pointer}
+/* Ranking */
+.rk-wrapper{max-width:600px;margin:0 auto;padding:1.1rem 1rem}
+.period-sw{display:flex;background:#fff;border-radius:12px;border:1px solid var(--kb);overflow:hidden;margin-bottom:1.1rem}
+.period-btn{flex:1;border:none;background:none;padding:.6rem .5rem;font-size:13px;font-weight:600;color:var(--km);cursor:pointer;transition:background .15s,color .15s}
+.period-btn.active{background:var(--kp);color:#fff}
+.rank-hero{background:linear-gradient(135deg,#0a6858 0%,#0d8c74 100%);border-radius:18px;padding:1.4rem 1.2rem 1.5rem;margin-bottom:1rem;text-align:center;position:relative;overflow:hidden}
+.rh-crown{font-size:36px;line-height:1;margin-bottom:.2rem}
+.rh-name{font-size:24px;font-weight:700;color:#fff;margin-bottom:.2rem}
+.rh-score{font-size:38px;font-weight:700;color:var(--kg);letter-spacing:-1px;line-height:1.1}
+.rh-unit{font-size:16px;font-weight:600;color:rgba(255,255,255,.8);margin-left:2px}
+.rh-sub{font-size:13px;color:rgba(255,255,255,.7);margin-top:.3rem}
+.rh-cases{display:inline-block;background:rgba(255,255,255,.15);border-radius:20px;padding:4px 14px;font-size:12px;color:#fff;margin-top:.5rem;font-weight:600}
+@keyframes crownPulse{0%,100%{transform:scale(1) rotate(-5deg)}50%{transform:scale(1.15) rotate(5deg)}}
+.crown-anim{display:inline-block;animation:crownPulse 2.5s ease-in-out infinite}
+.rank-list{display:flex;flex-direction:column;gap:.65rem;margin-bottom:1rem}
+.rank-row{background:#fff;border-radius:14px;border:1px solid var(--kb);padding:.8rem 1rem;display:flex;align-items:center;gap:.85rem;position:relative;overflow:hidden}
+.rank-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px}
+.rank-row.r2::before{background:#b0bec5}.rank-row.r3::before{background:#ce9b5a}.rank-row.r4::before{background:#a8d5c8}
+.rr-medal{font-size:24px;line-height:1;flex-shrink:0;width:32px;text-align:center}
+.rr-info{flex:1;min-width:0}
+.rr-name{font-size:15px;font-weight:700;color:var(--kt)}
+.rr-detail{font-size:12px;color:var(--km);margin-top:1px}
+.rr-right{text-align:right;flex-shrink:0}
+.rr-score{font-size:18px;font-weight:700;color:var(--kp)}
+.rr-unit{font-size:11px;color:var(--km)}
+.prog-wrap{margin-top:6px}
+.prog-label{display:flex;justify-content:space-between;font-size:10.5px;color:var(--km);margin-bottom:3px}
+.prog-bar{height:6px;background:#e8f0ee;border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;background:var(--kp);transition:width .8s cubic-bezier(.25,.46,.45,.94)}
+.rank-row.r2 .prog-fill{background:#90a4ae}.rank-row.r3 .prog-fill{background:#ce9b5a}.rank-row.r4 .prog-fill{background:var(--kpm)}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:1rem}
+.stat-card{background:#fff;border-radius:12px;border:1px solid var(--kb);padding:.85rem .9rem}
+.stat-card .sc-lbl{font-size:11.5px;color:var(--km);margin-bottom:4px}
+.stat-card .sc-val{font-size:22px;font-weight:700;color:var(--kt)}
+.stat-card .sc-unit{font-size:12px;color:var(--km);margin-left:2px}
+.activity-list{display:flex;flex-direction:column;gap:.5rem}
+.act-row{background:#fff;border-radius:10px;border:1px solid var(--kb);padding:.7rem .9rem;display:flex;align-items:center;gap:.75rem}
+.act-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.act-dot.new-dot{background:var(--kpm)}.act-dot.done-dot{background:var(--kg)}
+.act-info{flex:1;min-width:0}
+.act-title{font-size:13.5px;font-weight:600;color:var(--kt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.act-meta{font-size:11.5px;color:var(--km);margin-top:1px}
+.act-badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:8px;flex-shrink:0;white-space:nowrap}
+.act-badge.b-new{background:#e0f2ee;color:var(--kp)}.act-badge.b-done{background:#fff8ec;color:var(--ka)}
+.sec-ttl{font-size:12.5px;font-weight:700;color:var(--km);letter-spacing:.07em;text-transform:uppercase;margin-bottom:.65rem;padding-left:2px}
+.ticker{background:var(--kp);color:#fff;font-size:12.5px;padding:.4rem 1rem;overflow:hidden;white-space:nowrap}
+.ticker span{display:inline-block;animation:ticker 24s linear infinite}
+@keyframes ticker{from{transform:translateX(100vw)}to{transform:translateX(-100%)}}
+.live-badge{display:inline-flex;align-items:center;gap:5px;font-size:11px;color:var(--kpm);font-weight:600}
+.live-dot{width:7px;height:7px;border-radius:50%;background:var(--kpm)}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
+.live-dot{animation:pulse 1.8s ease-in-out infinite}
+
+/* Term banner */
+.term-banner{border-radius:14px;padding:.9rem 1.1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
+.term-banner.live{background:linear-gradient(135deg,#0a6858,#0d8c74);color:#fff}
+.term-banner.closed{background:#f0f4f3;border:1.5px solid var(--kb)}
+.tb-left .tb-term{font-size:13px;font-weight:700;letter-spacing:.04em;opacity:.85}
+.term-banner.live .tb-left .tb-term{color:rgba(255,255,255,.8)}
+.term-banner.closed .tb-left .tb-term{color:var(--km)}
+.tb-left .tb-title{font-size:17px;font-weight:700;margin-top:2px}
+.term-banner.live .tb-left .tb-title{color:#fff}
+.term-banner.closed .tb-left .tb-title{color:var(--kt)}
+.tb-right{text-align:right}
+.tb-countdown{font-size:28px;font-weight:700;line-height:1}
+.term-banner.live .tb-countdown{color:var(--kg)}
+.term-banner.closed .tb-countdown{color:var(--km)}
+.tb-countdown-label{font-size:11px;margin-top:2px}
+.term-banner.live .tb-countdown-label{color:rgba(255,255,255,.7)}
+.term-banner.closed .tb-countdown-label{color:var(--km)}
+.tb-sealed{display:inline-flex;align-items:center;gap:5px;background:var(--kg);color:#fff;font-size:12px;font-weight:700;padding:4px 12px;border-radius:20px;margin-top:4px}
+/* Period switcher */
+.period-sw{display:flex;background:#fff;border-radius:12px;border:1px solid var(--kb);overflow:hidden;margin-bottom:1.1rem}
+.period-btn{flex:1;border:none;background:none;padding:.55rem .3rem;font-size:12px;font-weight:600;color:var(--km);cursor:pointer;transition:background .15s,color .15s;text-align:center;line-height:1.3;position:relative}
+.period-btn.active{background:var(--kp);color:#fff}
+.period-btn .pb-sealed{display:block;font-size:9px;font-weight:400;color:var(--kg);margin-top:1px}
+.period-btn.active .pb-sealed{color:rgba(255,255,255,.8)}
+/* Confirmed badge on hero */
+.confirmed-ribbon{display:inline-block;background:var(--kg);color:#fff;font-size:11px;font-weight:700;padding:3px 12px;border-radius:20px;margin-bottom:.4rem;letter-spacing:.04em}
+
+/* ── Tab override: full-width 3-col, NO overflow-x ── */
+.tab-switcher{display:grid !important;grid-template-columns:1fr 1fr 1fr !important;overflow:visible !important;background:#fff;border-bottom:2px solid var(--kb)}
+.tab-btn{border:none;background:#f4f6f5;padding:.85rem .4rem;font-size:12.5px;font-weight:700;color:var(--km);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;border-bottom:3px solid transparent;line-height:1.3;-webkit-tap-highlight-color:transparent;touch-action:manipulation;user-select:none;min-height:58px;width:100%}
+.tab-btn.active{background:#fff;color:var(--kp);border-bottom-color:var(--kp)}
+.tab-btn .t-ic{font-size:20px;line-height:1}
+/* ── Panel visibility controlled only by JS inline style ── */
+#tab-panel-1,#tab-panel-2,#tab-panel-3{display:none}
+</style>
+</head>
+<body>
+
+<div class="app-header">
+  <div class="hdr-row"><div class="logo-mark">改</div><h1>カイゼン活動 報告フォーム</h1></div>
+  <p>現場の気づきを、会社の力に変えよう</p>
+</div>
+
+<div class="tab-switcher">
+  <button class="tab-btn" id="tab1-btn"><span class="t-ic">📝</span><span>①着手登録</span></button>
+  <button class="tab-btn" id="tab2-btn"><span class="t-ic">✅</span><span>②完了報告</span></button>
+  <button class="tab-btn" id="tab3-btn"><span class="t-ic">🏆</span><span>対抗戦<br>ランキング</span></button>
+</div>
+
+<div id="tab-panel-1"><div class="fw">
+  <div class="info-banner">💡 「こうすればもっとよくなる！」と気づいたら、まず登録しましょう。写真1枚からでもOKです。</div>
+  <div class="sc">
+    <div class="sh"><span class="si">📋</span><span class="st">基本情報</span></div>
+    <div class="sb">
+      <div class="mb-f">
+        <label class="fl" for="s1-team">チーム<span class="req">*</span></label>
+        <select class="form-select" id="s1-team"><option value="">— 選択してください —</option><option value="honsha">本社</option><option value="jozenji">定禅寺</option><option value="3center">3センター</option><option value="sendaiport">仙台港ベース</option></select>
+        <div class="err-msg" id="err-s1-team">チームを選択してください</div>
+      </div>
+      <div class="mb-f">
+        <label class="fl" for="s1-name">氏名<span class="req">*</span></label>
+        <input type="text" class="form-control" id="s1-name" placeholder="例：山田 太郎" autocomplete="name">
+        <div class="err-msg" id="err-s1-name">氏名を入力してください</div>
+      </div>
+      <div class="mb-f">
+        <label class="fl" for="s1-dept">所属部署</label>
+        <input type="text" class="form-control" id="s1-dept" placeholder="例：製造2課">
+      </div>
+      <div class="mb-f">
+        <label class="fl" for="s1-title">改善タイトル<span class="req">*</span></label>
+        <input type="text" class="form-control" id="s1-title" placeholder="例：部品棚の配置変更で取り出し時間を短縮">
+        <div class="err-msg" id="err-s1-title">タイトルを入力してください</div>
+      </div>
+      <div class="mb-f">
+        <label class="fl" for="s1-content">改善内容</label>
+        <span class="fh">「今はこうなっている → こう改善する」という形で書くとわかりやすいです</span>
+        <textarea class="form-control" id="s1-content" placeholder="例：棚の奥に部品があり前列をどかす必要がある。手前から取れる配置に変更する。"></textarea>
+      </div>
+    </div>
+  </div>
+  <div class="sc">
+    <div class="sh"><span class="si">📷</span><span class="st">改善前の写真</span></div>
+    <div class="sb">
+      <div class="photo-zone" onclick="document.getElementById('pi1').click()">
+        <div class="ph-ic">📸</div><div class="ph-lb">ここをタップして撮影・選択</div><div class="ph-sb">現状の問題がわかる写真を撮りましょう</div>
+      </div>
+      <input type="file" id="pi1" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(this,'pp1','pz1')">
+      <div class="photo-prev" id="pp1"><img src="" alt="改善前写真"><br><button class="photo-retake" onclick="document.getElementById('pi1').click()">📷 撮り直す</button></div>
+    </div>
+  </div>
+  <div class="sc">
+    <div class="sh"><span class="si">⏱️</span><span class="st">現状の負担 — 作業時間</span></div>
+    <div class="sb">
+      <div class="mb-f">
+        <label class="fl" for="s1-time">改善前の作業時間（1回あたり）</label>
+        <select class="form-select" id="s1-time">
+          <option value="">— 選択してください —</option>
+          <option value="5">5分</option>
+          <option value="10">10分</option>
+          <option value="15">15分</option>
+          <option value="20">20分</option>
+          <option value="30">30分</option>
+          <option value="45">45分</option>
+          <option value="60">1時間</option>
+          <option value="90">1時間30分</option>
+          <option value="120">2時間</option>
+          <option value="180">3時間</option>
+          <option value="240">4時間</option>
+          <option value="480">8時間（1日）</option>
+          <option value="custom">その他（手動入力）</option>
+        </select>
+      </div>
+      <div class="mb-f" id="s1-tcw" style="display:none">
+        <label class="fl" for="s1-tc">作業時間（分で入力）</label>
+        <input type="number" class="form-control" id="s1-tc" placeholder="例：25" min="1" oninput="toHankaku(this);calcPreview()">
+      </div>
+      <div class="mb-f">
+        <label class="fl" for="s1-freq">月に何回おこなう作業ですか？</label>
+        <select class="form-select" id="s1-freq">
+          <option value="">— 選択してください —</option>
+          <option value="1">1回</option>
+          <option value="2">2回</option>
+          <option value="3">3回</option>
+          <option value="4">4回</option>
+          <option value="5">5回</option>
+          <option value="6">6回</option>
+          <option value="7">7回</option>
+          <option value="8">8回</option>
+          <option value="9">9回</option>
+          <option value="10">10回</option>
+          <option value="11">11回</option>
+          <option value="12">12回</option>
+          <option value="13">13回</option>
+          <option value="14">14回</option>
+          <option value="15">15回</option>
+          <option value="16">16回</option>
+          <option value="17">17回</option>
+          <option value="18">18回</option>
+          <option value="19">19回</option>
+          <option value="20">20回</option>
+          <option value="21">21回</option>
+          <option value="22">22回</option>
+          <option value="23">23回</option>
+          <option value="24">24回</option>
+          <option value="25">25回</option>
+          <option value="26">26回</option>
+          <option value="27">27回</option>
+          <option value="28">28回</option>
+          <option value="29">29回</option>
+          <option value="30">30回</option>
+          <option value="31">31回</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="sc">
+    <div class="sh"><span class="si">💸</span><span class="st">現状の負担 — 費用・経費</span></div>
+    <div class="sb">
+      <div class="mb-f">
+        <label class="fl" for="s1-cost">改善前の直接的な費用・経費（円）</label>
+        <span class="fh">材料費・外注費など。毎月なら月額、1回限りなら総額を入力</span>
+        <input type="number" class="form-control" id="s1-cost" placeholder="例：50000" min="0" oninput="toHankaku(this);calcPreview()">
+      </div>
+      <div class="mb-f">
+        <label class="fl" for="s1-costfreq">上記費用は</label>
+        <select class="form-select" id="s1-costfreq" onchange="calcPreview()"><option value="monthly">毎月かかる費用</option><option value="once">1回だけの費用</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="sc">
+    <div class="sh"><span class="si">🔧</span><span class="st">対策費用（予定）</span></div>
+    <div class="sb">
+      <div class="mb-f">
+        <label class="fl" for="s1-plancost">予定している対策費用（円）</label>
+        <span class="fh">改善のためにかかる費用の見込み額。0円でもOKです</span>
+        <input type="number" class="form-control" id="s1-plancost" placeholder="例：10000" min="0" oninput="toHankaku(this);calcPreview()">
+      </div>
+    </div>
+  </div>
+  <div class="cp-card" id="cp1" style="display:none">
+    <div class="cp-title">📊 削減見込みサマリー（概算）</div>
+    <div class="c-row"><span class="cr-l">時間削減見込み（月額換算）</span><span class="cr-v" id="pv-time">—</span></div>
+    <div class="c-row"><span class="cr-l">費用削減見込み</span><span class="cr-v" id="pv-cost">—</span></div>
+    <div class="c-row"><span class="cr-l">対策費用（予定）</span><span class="cr-v" id="pv-plan">—</span></div>
+  </div>
+  <button class="submit-btn" onclick="submitForm(1)">
+    <svg width="18" height="18" style="vertical-align:-3px;margin-right:7px" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>着手登録を送信する
+  </button>
+</div></div>
+
+<div id="tab-panel-2"><div class="fw">
+  <div class="info-banner">🎉 お疲れさまです！改善の成果を記録して、削減効果を確定させましょう。</div>
+  <div class="sc">
+    <div class="sh"><span class="si">📷</span><span class="st">改善後の写真</span></div>
+    <div class="sb">
+      <div class="photo-zone" onclick="document.getElementById('pi2').click()">
+        <div class="ph-ic">📸</div><div class="ph-lb">改善後の写真を撮影・選択</div><div class="ph-sb">ビフォー・アフターで効果が伝わります！</div>
+      </div>
+      <input type="file" id="pi2" accept="image/*" capture="environment" style="display:none" onchange="handlePhoto(this,'pp2','pz2')">
+      <div class="photo-prev" id="pp2"><img src="" alt="改善後写真"><br><button class="photo-retake" onclick="document.getElementById('pi2').click()">📷 撮り直す</button></div>
+    </div>
+  </div>
+  <div class="sc">
+    <div class="sh"><span class="si">⏱️</span><span class="st">改善後の結果 — 作業時間</span></div>
+    <div class="sb">
+      <div class="mb-f">
+        <label class="fl" for="s2-time">改善後の実際の作業時間（1回あたり）</label>
+        <select class="form-select" id="s2-time">
+          <option value="">— 選択してください —</option>
+          <option value="0">0分（作業がなくなった）</option>
+          <option value="5">5分</option>
+          <option value="10">10分</option>
+          <option value="15">15分</option>
+          <option value="20">20分</option>
+          <option value="30">30分</option>
+          <option value="45">45分</option>
+          <option value="60">1時間</option>
+          <option value="90">1時間30分</option>
+          <option value="120">2時間</option>
+          <option value="180">3時間</option>
+          <option value="240">4時間</option>
+          <option value="480">8時間（1日）</option>
+          <option value="custom">その他（手動入力）</option>
+        </select>
+      </div>
+      <div class="mb-f" id="s2-tcw" style="display:none">
+        <label class="fl" for="s2-tc">作業時間（分で入力）</label>
+        <input type="number" class="form-control" id="s2-tc" placeholder="例：5" min="0" oninput="toHankaku(this);calcResult()">
+      </div>
+      <div class="mb-f">
+        <label class="fl" for="s2-freq">改善後の月間作業回数</label>
+        <select class="form-select" id="s2-freq">
+          <option value="">— 選択してください —</option>
+          <option value="0">0回（作業がなくなった）</option>
+          <option value="1">1回</option>
+          <option value="2">2回</option>
+          <option value="3">3回</option>
+          <option value="4">4回</option>
+          <option value="5">5回</option>
+          <option value="6">6回</option>
+          <option value="7">7回</option>
+          <option value="8">8回</option>
+          <option value="9">9回</option>
+          <option value="10">10回</option>
+          <option value="11">11回</option>
+          <option value="12">12回</option>
+          <option value="13">13回</option>
+          <option value="14">14回</option>
+          <option value="15">15回</option>
+          <option value="16">16回</option>
+          <option value="17">17回</option>
+          <option value="18">18回</option>
+          <option value="19">19回</option>
+          <option value="20">20回</option>
+          <option value="21">21回</option>
+          <option value="22">22回</option>
+          <option value="23">23回</option>
+          <option value="24">24回</option>
+          <option value="25">25回</option>
+          <option value="26">26回</option>
+          <option value="27">27回</option>
+          <option value="28">28回</option>
+          <option value="29">29回</option>
+          <option value="30">30回</option>
+          <option value="31">31回</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="sc">
+    <div class="sh"><span class="si">💰</span><span class="st">改善後の結果 — 費用・経費</span></div>
+    <div class="sb">
+      <div class="mb-f">
+        <label class="fl" for="s2-cost">改善後の直接的な費用・経費（円）</label>
+        <span class="fh">削減後の費用。なくなった場合は 0 と入力</span>
+        <input type="number" class="form-control" id="s2-cost" placeholder="例：0" min="0" oninput="toHankaku(this);calcResult()">
+      </div>
+      <div class="mb-f">
+        <label class="fl" for="s2-costfreq">上記費用は（改善後）</label>
+        <select class="form-select" id="s2-costfreq" onchange="calcResult()"><option value="monthly">毎月かかる費用</option><option value="once">1回だけの費用</option></select>
+      </div>
+    </div>
+  </div>
+  <div class="sc">
+    <div class="sh"><span class="si">🔧</span><span class="st">実際にかかった対策費用</span></div>
+    <div class="sb">
+      <div class="mb-f">
+        <label class="fl" for="s2-actual">実際に要した対策費用（円）<span class="req">*</span></label>
+        <span class="fh">0円の場合も「0」と入力してください</span>
+        <input type="number" class="form-control" id="s2-actual" placeholder="例：8500" min="0" oninput="toHankaku(this);calcResult()">
+        <div class="err-msg" id="err-s2-actual">対策費用を入力してください（0円の場合は 0 と入力）</div>
+      </div>
+    </div>
+  </div>
+  <div id="result-area" style="display:none">
+    <div class="rs-box" id="rs-box">
+      <div class="rs-label">今回の確定削減額（月額換算）</div>
+      <div class="rs-amount"><span id="rs-num">0</span><span class="rs-unit">円</span></div>
+      <div id="rs-badge" class="rs-badge">🎉 コスト削減に貢献！</div>
+    </div>
+    <div class="rs-bkd">
+      <div class="rs-bkd-row"><span class="rb-l">⏱ 時間削減額（月額）</span><span class="rb-v p" id="rb-time">—</span></div>
+      <div class="rs-bkd-row"><span class="rb-l">💸 費用削減額（月額）</span><span class="rb-v p" id="rb-cost">—</span></div>
+      <div class="rs-bkd-row"><span class="rb-l">🔧 対策費用（実費）</span><span class="rb-v m" id="rb-actual">—</span></div>
+      <div class="rs-bkd-row total"><span class="rb-l" style="color:var(--kp)">合計削減額</span><span class="rb-v" id="rb-total">—</span></div>
+    </div>
+  </div>
+  <div class="sc">
+    <div class="sh"><span class="si">✨</span><span class="st">アピールポイント</span></div>
+    <div class="sb">
+      <div class="mb-f">
+        <label class="fl" for="s2-appeal">この改善で得られた効果や気づき</label>
+        <span class="fh">数字以外の効果（安全性・品質・働きやすさ）も自由に記入してください</span>
+        <textarea class="form-control" id="s2-appeal" placeholder="例：棚の整理で作業者の腰への負担も減りました。他ラインへの展開も検討中です。"></textarea>
+      </div>
+    </div>
+  </div>
+  <button class="submit-btn accent" onclick="submitForm(2)">
+    <svg width="18" height="18" style="vertical-align:-3px;margin-right:7px" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>改善完了を報告する
+  </button>
+</div></div>
+
+<div id="tab-panel-3">
+  <div class="ticker"><span>🔥 最新：仙台港ベース「フォークリフト動線改善」で 月42,000円削減！　🏅 今週の新着5件　📢 3センター逆転なるか！？　✨ 本社が今月首位をキープ中！　</span></div>
+  <div class="rk-wrapper">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem">
+      <span class="live-badge"><span class="live-dot"></span> リアルタイム更新中</span>
+      <span style="font-size:11.5px;color:var(--km)">最終更新: <span id="last-updated">—</span></span>
+    </div>
+    <!-- 期カウントダウンバナー -->
+    <div class="term-banner" id="term-banner"></div>
+    <div class="period-sw" id="period-sw"></div>
+    <div class="rank-hero">
+      <div id="rk-confirmed"></div>
+      <div class="rh-crown"><span class="crown-anim">👑</span></div>
+      <div class="rh-name" id="rk-1name">—</div>
+      <div><span class="rh-score" id="rk-1score">—</span><span class="rh-unit" id="rk-1unit">円</span></div>
+      <div class="rh-sub" id="rk-1sub">削減額合計</div>
+      <div class="rh-cases" id="rk-1cases">—</div>
+    </div>
+    <div class="rank-list" id="rk-list"></div>
+    <div class="sec-ttl">全社 総合スコア</div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="sc-lbl">💰 累計削減額</div><div class="sc-val" id="st-total">—</div></div>
+      <div class="stat-card"><div class="sc-lbl">📋 登録件数</div><div class="sc-val" id="st-cases">—</div></div>
+      <div class="stat-card"><div class="sc-lbl">✅ 完了件数</div><div class="sc-val" id="st-done">—</div></div>
+      <div class="stat-card"><div class="sc-lbl">⏱ 時間削減</div><div class="sc-val" id="st-hours">—</div></div>
+    </div>
+    <div class="sec-ttl" style="margin-top:.4rem">最近の活動</div>
+    <div class="activity-list" id="act-list"></div>
+  </div>
+</div>
+
+<!-- 送信完了モーダル -->
+<div class="modal-backdrop" id="modal" onclick="closeModalOutside(event)">
+  <div class="modal-box" onclick="event.stopPropagation()">
+    <div class="modal-icon" id="modal-icon">✅</div>
+    <div class="modal-title" id="modal-title">送信しました</div>
+    <div class="modal-body" id="modal-body"></div>
+    <div id="modal-score-area" style="display:none">
+      <div class="modal-score" id="modal-score">0</div>
+      <div class="modal-score-unit">円/月 の削減に貢献！</div>
+    </div>
+    <button class="modal-btn-primary" onclick="closeModal()">閉じる</button>
+    <button class="modal-btn-secondary" id="modal-rank-btn" onclick="goToRanking()" style="display:none">🏆 ランキングを見る</button>
+  </div>
+</div>
+
+<script>
+
+// ===== TERM / PERIOD LOGIC =====
+// 3 terms per year: Term1 = Apr1-Jul31, Term2 = Aug1-Nov30, Term3 = Dec1-Mar31
+// Deadline months (0-indexed): 6=July, 10=November, 2=March
+function getTermInfo() {
+  var now = new Date();
+  var m = now.getMonth(); // 0-11
+  var y = now.getFullYear();
+  var term, deadline, termLabel, termShort;
+  if (m <= 6) {          // Jan-Jul → term 1 (ends Jul 31)
+    term = 1; deadline = new Date(y, 6, 31, 23, 59, 59);
+    termLabel = "第1期"; termShort = "1期";
+  } else if (m <= 10) {  // Aug-Nov → term 2 (ends Nov 30)
+    term = 2; deadline = new Date(y, 10, 30, 23, 59, 59);
+    termLabel = "第2期"; termShort = "2期";
+  } else {               // Dec → term 3 (ends Mar 31 next year)
+    term = 3; deadline = new Date(y + 1, 2, 31, 23, 59, 59);
+    termLabel = "第3期"; termShort = "3期";
+  }
+  var diff = deadline - now;
+  var days = Math.ceil(diff / 86400000);
+  return { term: term, deadline: deadline, days: days, label: termLabel, short: termShort };
+}
+
+function getPreviousTerms() {
+  var now = new Date();
+  var m = now.getMonth();
+  var y = now.getFullYear();
+  // terms that have already ended this fiscal year
+  var closed = [];
+  if (m > 6)  closed.push({ term: 1, label: "第1期", short: "1期", ended: new Date(y, 6, 31) });
+  if (m > 10) closed.push({ term: 2, label: "第2期", short: "2期", ended: new Date(y, 10, 30) });
+  return closed;
+}
+
+// ===== DEMO DATA =====
+var DEMO = {
+  // current term (live)
+  cur: {
+    teams:[{name:"本社",score:187400,cases:8,done:5},{name:"仙台港ベース",score:142000,cases:6,done:4},{name:"3センター",score:98500,cases:5,done:3},{name:"定禅寺",score:74200,cases:4,done:2}],
+    total:502100,cases:23,done:14,hours:187, confirmed:false
+  },
+  // past terms (sealed results)
+  t1: {
+    teams:[{name:"仙台港ベース",score:412000,cases:18,done:14},{name:"本社",score:387400,cases:16,done:12},{name:"3センター",score:298000,cases:13,done:10},{name:"定禅寺",score:201200,cases:11,done:8}],
+    total:1298600,cases:58,done:44,hours:512, confirmed:true
+  },
+  t2: {
+    teams:[{name:"本社",score:524000,cases:22,done:18},{name:"3センター",score:398500,cases:17,done:14},{name:"仙台港ベース",score:312000,cases:14,done:11},{name:"定禅寺",score:241200,cases:12,done:9}],
+    total:1475700,cases:65,done:52,hours:604, confirmed:true
+  },
+  t3: {
+    teams:[{name:"3センター",score:487500,cases:21,done:18},{name:"仙台港ベース",score:451000,cases:20,done:17},{name:"本社",score:387400,cases:16,done:13},{name:"定禅寺",score:298000,cases:13,done:11}],
+    total:1623900,cases:70,done:59,hours:712, confirmed:true
+  },
+  all: {
+    teams:[{name:"本社",score:3240000,cases:120,done:105},{name:"仙台港ベース",score:2987000,cases:112,done:98},{name:"3センター",score:2412000,cases:95,done:82},{name:"定禅寺",score:1987000,cases:84,done:72}],
+    total:10626000,cases:411,done:357,hours:4820, confirmed:false
+  }
+};
+var ACTS=[
+  {type:"done",team:"仙台港ベース",title:"フォークリフト動線改善",time:"5分前",score:42000},
+  {type:"new", team:"本社",         title:"会議室予約システム改善",time:"23分前",score:null},
+  {type:"done",team:"3センター",    title:"検品ラベル貼り付け治具",time:"1時間前",score:18500},
+  {type:"new", team:"定禅寺",       title:"日報デジタル化",         time:"2時間前",score:null},
+  {type:"done",team:"本社",         title:"在庫棚番整理プロジェクト",time:"昨日", score:63000}
+];
+var MEDALS=["🥈","🥉","4️⃣"];
+var RCL=["r2","r3","r4"];
+var curPeriod="cur";
+var prevAmt=0;
+
+function fmt(n){return Math.round(n).toLocaleString("ja-JP")}
+
+// ===== TAB SWITCHING =====
+function switchTab(n) {
+  for (var i = 1; i <= 3; i++) {
+    var panel = document.getElementById("tab-panel-" + i);
+    var btn   = document.getElementById("tab" + i + "-btn");
+    panel.style.display = (i === n) ? "block" : "none";
+    panel.classList.toggle("active", i === n);
+    btn.classList.toggle("active", i === n);
+  }
+  if (n === 3) renderRanking(curPeriod);
+  window.scrollTo(0, 0);
+}
+
+// ===== RANKING =====
+function renderRanking(p) {
+  buildTermBanner(p);
+  var d = DEMO[p];
+  var s = d.teams.slice().sort(function(a,b){ return b.score - a.score; });
+  var top = s[0], rest = s.slice(1), mx = top.score;
+  var conf = document.getElementById("rk-confirmed");
+  conf.innerHTML = d.confirmed ? "<div class='confirmed-ribbon'>🏆 確定結果</div>" : "";
+  document.getElementById("rk-1name").textContent = top.name;
+  document.getElementById("rk-1score").textContent = fmt(top.score);
+  document.getElementById("rk-1unit").textContent = d.confirmed ? "円" : "円（暫定）";
+  document.getElementById("rk-1sub").textContent  = d.confirmed ? "削減額合計（確定）" : "削減額合計（集計中）";
+  document.getElementById("rk-1cases").textContent = "登録 " + top.cases + "件 / 完了 " + top.done + "件";
+  var list = document.getElementById("rk-list"); list.innerHTML = "";
+  rest.forEach(function(t, i) {
+    var pct = Math.round(t.score / mx * 100);
+    var div = document.createElement("div"); div.className = "rank-row " + RCL[i];
+    div.innerHTML =
+      "<div class='rr-medal'>" + MEDALS[i] + "</div>" +
+      "<div class='rr-info'>" +
+        "<div class='rr-name'>" + t.name + "</div>" +
+        "<div class='rr-detail'>登録 " + t.cases + "件 / 完了 " + t.done + "件</div>" +
+        "<div class='prog-wrap'>" +
+          "<div class='prog-label'><span>首位比 " + pct + "%</span><span>" + fmt(mx - t.score) + "円差</span></div>" +
+          "<div class='prog-bar'><div class='prog-fill' style='width:0%' data-target='" + pct + "'></div></div>" +
+        "</div>" +
+      "</div>" +
+      "<div class='rr-right'><div class='rr-score'>" + fmt(t.score) + "</div><div class='rr-unit'>円</div></div>";
+    list.appendChild(div);
+  });
+  setTimeout(function(){
+    document.querySelectorAll(".prog-fill[data-target]").forEach(function(el){
+      el.style.width = el.getAttribute("data-target") + "%";
+    });
+  }, 80);
+  document.getElementById("st-total").innerHTML = fmt(d.total) + "<span class='sc-unit'>円</span>";
+  document.getElementById("st-cases").innerHTML = fmt(d.cases) + "<span class='sc-unit'>件</span>";
+  document.getElementById("st-done").innerHTML  = fmt(d.done)  + "<span class='sc-unit'>件</span>";
+  document.getElementById("st-hours").innerHTML = fmt(d.hours) + "<span class='sc-unit'>時間</span>";
+  var al = document.getElementById("act-list"); al.innerHTML = "";
+  ACTS.forEach(function(a){
+    var div = document.createElement("div"); div.className = "act-row";
+    div.innerHTML =
+      "<div class='act-dot " + (a.type==="done" ? "done-dot" : "new-dot") + "'>&nbsp;</div>" +
+      "<div class='act-info'>" +
+        "<div class='act-title'>" + a.title + "</div>" +
+        "<div class='act-meta'>" + a.team + "・" + a.time + (a.score ? "・▲" + fmt(a.score) + "円" : "") + "</div>" +
+      "</div>" +
+      "<span class='act-badge " + (a.type==="done" ? "b-done" : "b-new") + "'>" + (a.type==="done" ? "完了" : "新着") + "</span>";
+    al.appendChild(div);
+  });
+  var now = new Date();
+  document.getElementById("last-updated").textContent = now.getHours() + ":" + ("0"+now.getMinutes()).slice(-2);
+}
+
+function setPeriod(p, btn) {
+  curPeriod = p;
+  document.querySelectorAll(".period-btn").forEach(function(b){ b.classList.remove("active"); });
+  btn.classList.add("active");
+  renderRanking(p);
+}
+
+
+// Build period switcher buttons dynamically based on current date
+function buildPeriodSwitcher() {
+  var ti = getTermInfo();
+  var closed = getPreviousTerms();
+  var sw = document.getElementById("period-sw");
+  sw.innerHTML = "";
+
+  // Current term button (always first)
+  var b0 = document.createElement("button");
+  b0.className = "period-btn active";
+  b0.innerHTML = "📍 " + ti.label + "（集計中）";
+  b0.onclick = function(){ setPeriod("cur", b0); };
+  sw.appendChild(b0);
+
+  // Closed past terms (within this fiscal year demo data)
+  // Show T1, T2, T3 depending on what's been closed
+  // For demo: show all three past terms
+  var termKeys = ["t1","t2","t3"];
+  var termLabels = ["第1期","第2期","第3期"];
+  var termDeadlines = ["〜7/31確定","〜11/30確定","〜3/31確定"];
+  termKeys.forEach(function(key, idx) {
+    var btn = document.createElement("button");
+    btn.className = "period-btn";
+    btn.innerHTML = "🏆 " + termLabels[idx] + "<span class='pb-sealed'>" + termDeadlines[idx] + "</span>";
+    btn.onclick = (function(k){ return function(){ setPeriod(k, btn); }; })(key);
+    sw.appendChild(btn);
+  });
+
+  // All-time
+  var ball = document.createElement("button");
+  ball.className = "period-btn";
+  ball.innerHTML = "📊 全期累計";
+  ball.onclick = function(){ setPeriod("all", ball); };
+  sw.appendChild(ball);
+}
+
+// Build the countdown banner
+function buildTermBanner(period) {
+  var banner = document.getElementById("term-banner");
+  var ti = getTermInfo();
+  if (period === "cur") {
+    banner.className = "term-banner live";
+    var deadlineStr = (ti.deadline.getMonth()+1) + "/" + ti.deadline.getDate();
+    banner.innerHTML =
+      "<div class='tb-left'>" +
+        "<div class='tb-term'>" + ti.label + " 集計中</div>" +
+        "<div class='tb-title'>集計締切まで</div>" +
+      "</div>" +
+      "<div class='tb-right'>" +
+        "<div class='tb-countdown'>" + ti.days + "<span style='font-size:16px;font-weight:600;margin-left:3px'>日</span></div>" +
+        "<div class='tb-countdown-label'>締切: " + deadlineStr + " 23:59</div>" +
+      "</div>";
+  } else if (period === "all") {
+    banner.className = "term-banner closed";
+    banner.innerHTML =
+      "<div class='tb-left'>" +
+        "<div class='tb-term'>全期間累計</div>" +
+        "<div class='tb-title'>全チーム総合成績</div>" +
+      "</div>" +
+      "<div class='tb-right' style='text-align:right'>" +
+        "<span class='tb-sealed'>📊 累計集計</span>" +
+      "</div>";
+  } else {
+    var termNum = period.replace("t","");
+    var deadlines = {t1:"7月31日",t2:"11月30日",t3:"3月31日"};
+    banner.className = "term-banner closed";
+    banner.innerHTML =
+      "<div class='tb-left'>" +
+        "<div class='tb-term'>第" + termNum + "期 確定結果</div>" +
+        "<div class='tb-title'>" + (deadlines[period]||"") + " 集計確定</div>" +
+      "</div>" +
+      "<div class='tb-right'>" +
+        "<span class='tb-sealed'>🏆 確定</span>" +
+      "</div>";
+  }
+}
+
+
+
+// ===== FREQ CHIPS =====
+function buildFreqChips(cid,hid,includeZero){
+  var c=document.getElementById(cid); c.innerHTML="";
+  var start=includeZero?0:1;
+  for(var i=start;i<=31;i++){
+    (function(val){
+      var chip=document.createElement("div");
+      chip.className="freq-chip"+(val===(includeZero?0:1)?" selected":"");
+      chip.innerHTML=val+"<span class=\"fc-unit\">回</span>";
+      chip.addEventListener("click",function(){
+        c.querySelectorAll(".freq-chip").forEach(function(x){x.classList.remove("selected")});
+        chip.classList.add("selected");
+        document.getElementById(hid).value=val;
+        if(hid==="s1-freq") calcPreview(); else calcResult();
+      });
+      c.appendChild(chip);
+    })(i);
+  }
+  document.getElementById(hid).value=includeZero?"0":"1";
+}
+
+// ===== PHOTO =====
+function handlePhoto(input,prevId,zoneId){
+  var f=input.files[0]; if(!f) return;
+  var r=new FileReader();
+  r.onload=function(e){
+    var pv=document.getElementById(prevId);
+    pv.querySelector("img").src=e.target.result;
+    pv.style.display="block";
+  };
+  r.readAsDataURL(f);
+}
+
+// ===== UTIL =====
+function toHankaku(el){el.value=el.value.replace(/[０-９]/g,function(s){return String.fromCharCode(s.charCodeAt(0)-0xFEE0)})}
+function onTC(selId,wrapId){document.getElementById(wrapId).style.display=document.getElementById(selId).value==="custom"?"block":"none"}
+function getMins(selId,customId){var v=document.getElementById(selId).value;if(v==="custom")return parseFloat(document.getElementById(customId).value)||0;return parseFloat(v)||0}
+
+// ===== CALC PREVIEW (tab1) =====
+function calcPreview(){
+  var tbMin=getMins("s1-time","s1-tc");
+  var freq=parseInt(document.getElementById("s1-freq").value)||1;
+  var timeSave=tbMin*freq*1800/60;
+  var cbRaw=parseFloat(document.getElementById("s1-cost").value)||0;
+  var planCost=parseFloat(document.getElementById("s1-plancost").value)||0;
+  var has=tbMin>0||cbRaw>0||planCost>0;
+  document.getElementById("cp1").style.display=has?"block":"none";
+  document.getElementById("pv-time").textContent=tbMin>0?fmt(timeSave)+" 円/月":"—";
+  document.getElementById("pv-cost").textContent=cbRaw>0?fmt(cbRaw)+" 円":"—";
+  document.getElementById("pv-plan").textContent=fmt(planCost)+" 円";
+}
+
+// ===== CALC RESULT (tab2) =====
+function calcResult(){
+  var tbMin=getMins("s1-time","s1-tc");
+  var fbFreq=parseInt(document.getElementById("s1-freq").value)||1;
+  var tbc=tbMin*fbFreq*1800/60;
+  var taMin=getMins("s2-time","s2-tc");
+  var faFreq=parseInt(document.getElementById("s2-freq").value)||0;
+  var tac=taMin*faFreq*1800/60;
+  var timeSave=tbc-tac;
+  var cbRaw=parseFloat(document.getElementById("s1-cost").value)||0;
+  var cbM=document.getElementById("s1-costfreq").value==="monthly"?cbRaw:cbRaw/12;
+  var caV=document.getElementById("s2-cost").value;
+  var caRaw=caV===""?null:parseFloat(caV);
+  var caM=caRaw===null?null:(document.getElementById("s2-costfreq").value==="monthly"?caRaw:caRaw/12);
+  var costSave=caM!==null?cbM-caM:0;
+  var aV=document.getElementById("s2-actual").value;
+  var actual=aV===""?null:parseFloat(aV);
+  var ok=actual!==null&&(document.getElementById("s2-time").value!==""||caM!==null);
+  var area=document.getElementById("result-area");
+  if(!ok){area.style.display="none";return}
+  area.style.display="block";
+  var total=timeSave+costSave-actual;
+  document.getElementById("rb-time").textContent=fmt(timeSave)+" 円/月";
+  document.getElementById("rb-time").className="rb-v "+(timeSave>=0?"p":"m");
+  document.getElementById("rb-cost").textContent=fmt(costSave)+" 円/月";
+  document.getElementById("rb-cost").className="rb-v "+(costSave>=0?"p":"m");
+  document.getElementById("rb-actual").textContent="▲ "+fmt(actual)+" 円";
+  document.getElementById("rb-total").textContent=fmt(total)+" 円/月";
+  var box=document.getElementById("rs-box"), badge=document.getElementById("rs-badge");
+  if(total!==prevAmt){
+    animateCount(document.getElementById("rs-num"),prevAmt,total,650);
+    prevAmt=total;
+    box.classList.remove("shimmer-on"); void box.offsetWidth;
+    if(total>0){box.classList.add("shimmer-on");badge.textContent="🎉 月 "+fmt(total)+" 円のコスト削減に貢献！";badge.className="rs-badge"}
+    else if(total===0){badge.textContent="±0円 — 効果は別途評価";badge.className="rs-badge zero"}
+    else{badge.textContent="⚠️ 現時点では費用超過";badge.className="rs-badge neg"}
+  }
+}
+function animateCount(el,from,to,dur){
+  var start=performance.now();
+  function step(now){
+    var t=Math.min((now-start)/dur,1);
+    var ease=t<.5?2*t*t:-1+(4-2*t)*t;
+    var val=Math.round(from+(to-from)*ease);
+    el.textContent=Math.abs(val).toLocaleString("ja-JP");
+    var u=el.parentElement.querySelector(".rs-unit");
+    if(u) u.textContent=val<0?"円（超過）":"円";
+    if(t<1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+// ===== VALIDATE =====
+function validateForm(n){
+  var ok=true;
+  if(n===1){
+    [["s1-team","err-s1-team"],["s1-name","err-s1-name"],["s1-title","err-s1-title"]].forEach(function(pair){
+      var el=document.getElementById(pair[0]),err=document.getElementById(pair[1]),emp=!el.value.trim();
+      el.classList.toggle("invalid",emp); err.classList.toggle("show",emp); if(emp) ok=false;
+    });
+  }
+  if(n===2){
+    var el=document.getElementById("s2-actual"),err=document.getElementById("err-s2-actual"),emp=el.value==="";
+    el.classList.toggle("invalid",emp); err.classList.toggle("show",emp); if(emp) ok=false;
+  }
+  return ok;
+}
+
+// ===== SUBMIT =====
+function submitForm(n){
+  if(!validateForm(n)){
+    var fe=document.querySelector("#tab-panel-"+n+" .invalid");
+    if(fe) fe.scrollIntoView({behavior:"smooth",block:"center"});
+    return;
+  }
+  var icon=document.getElementById("modal-icon");
+  var title=document.getElementById("modal-title");
+  var body=document.getElementById("modal-body");
+  var scoreArea=document.getElementById("modal-score-area");
+  var rankBtn=document.getElementById("modal-rank-btn");
+  if(n===1){
+    icon.textContent="📝";
+    title.textContent="着手登録が完了しました！";
+    body.textContent="改善への第一歩を踏み出しましたね。改善が完了したら「②完了報告」タブから結果を入力しましょう。";
+    scoreArea.style.display="none";
+    rankBtn.style.display="none";
+  } else {
+    var total=prevAmt;
+    icon.textContent=total>0?"🎉":"✅";
+    title.textContent="完了報告を送信しました！";
+    if(total>0){
+      body.textContent="素晴らしい改善です！チームのスコアが更新されました。";
+      document.getElementById("modal-score").textContent=fmt(total);
+      scoreArea.style.display="block";
+    } else {
+      body.textContent="お疲れさまでした。改善活動の完了を記録しました。";
+      scoreArea.style.display="none";
+    }
+    rankBtn.style.display="block";
+  }
+  document.getElementById("modal").classList.add("show");
+}
+function closeModal(){document.getElementById("modal").classList.remove("show")}
+function closeModalOutside(e){if(e.target===document.getElementById("modal")) closeModal()}
+function goToRanking(){closeModal(); switchTab(3)}
+
+
+
+// ===== TIME CHIPS =====
+var TIME_OPTIONS = [
+  {label:"5分",   val:"5"},
+  {label:"10分",  val:"10"},
+  {label:"15分",  val:"15"},
+  {label:"20分",  val:"20"},
+  {label:"30分",  val:"30"},
+  {label:"45分",  val:"45"},
+  {label:"1時間", val:"60"},
+  {label:"1.5時間",val:"90"},
+  {label:"2時間", val:"120"},
+  {label:"3時間", val:"180"},
+  {label:"4時間", val:"240"},
+  {label:"8時間", val:"480"},
+  {label:"手動入力",val:"custom"}
+];
+var TIME_OPTIONS_AFTER = [
+  {label:"0分",   val:"0"},
+  {label:"5分",   val:"5"},
+  {label:"10分",  val:"10"},
+  {label:"15分",  val:"15"},
+  {label:"20分",  val:"20"},
+  {label:"30分",  val:"30"},
+  {label:"45分",  val:"45"},
+  {label:"1時間", val:"60"},
+  {label:"1.5時間",val:"90"},
+  {label:"2時間", val:"120"},
+  {label:"3時間", val:"180"},
+  {label:"4時間", val:"240"},
+  {label:"8時間", val:"480"},
+  {label:"手動入力",val:"custom"}
+];
+
+function buildTimeChips(cid, hiddenId, options, customWrapId, calcFn) {
+  var container = document.getElementById(cid);
+  container.innerHTML = "";
+  options.forEach(function(opt) {
+    var chip = document.createElement("div");
+    chip.className = "freq-chip";
+    chip.style.width = "68px";
+    chip.style.height = "48px";
+    chip.style.fontSize = "12px";
+    chip.textContent = opt.label;
+    chip.addEventListener("touchend", function(e) {
+      e.preventDefault();
+      selectTimeChip(container, chip, hiddenId, opt.val, customWrapId, calcFn);
+    }, {passive: false});
+    chip.addEventListener("click", function() {
+      selectTimeChip(container, chip, hiddenId, opt.val, customWrapId, calcFn);
+    });
+    container.appendChild(chip);
+  });
+}
+
+function selectTimeChip(container, chip, hiddenId, val, customWrapId, calcFn) {
+  container.querySelectorAll(".freq-chip").forEach(function(c){ c.classList.remove("selected"); });
+  chip.classList.add("selected");
+  document.getElementById(hiddenId).value = val;
+  var wrap = document.getElementById(customWrapId);
+  if (wrap) wrap.style.display = (val === "custom") ? "block" : "none";
+  if (calcFn) calcFn();
+}
+
+// ===== INIT =====
+(function() {
+  // Tab switching — pure inline style, no CSS class dependency
+  function showTab(n) {
+    for (var i = 1; i <= 3; i++) {
+      var panel = document.getElementById("tab-panel-" + i);
+      var btn   = document.getElementById("tab" + i + "-btn");
+      panel.style.display = (i === n) ? "block" : "none";
+      btn.classList.toggle("active", i === n);
+    }
+    if (n === 3) renderRanking(curPeriod);
+    window.scrollTo(0, 0);
+  }
+
+  // Override global switchTab and goToRanking to use showTab
+  window.switchTab = showTab;
+  window.goToRanking = function() { closeModal(); showTab(3); };
+
+  // Bind buttons with both touchend and click for maximum compatibility
+  function bindTab(btnId, tabNum) {
+    var btn = document.getElementById(btnId);
+    var fired = false;
+    btn.addEventListener("touchend", function(e) {
+      e.preventDefault();
+      fired = true;
+      showTab(tabNum);
+      setTimeout(function(){ fired = false; }, 300);
+    }, {passive: false});
+    btn.addEventListener("click", function() {
+      if (!fired) showTab(tabNum);
+    });
+  }
+  bindTab("tab1-btn", 1);
+  bindTab("tab2-btn", 2);
+  bindTab("tab3-btn", 3);
+
+  // Show tab 1 on load
+  showTab(1);
+
+  // Build chips and ranking
+  document.getElementById("s1-freq").addEventListener("change", function(){ calcPreview(); });
+  document.getElementById("s2-freq").addEventListener("change", function(){ calcResult(); });
+  buildPeriodSwitcher();
+
+  // 作業時間 select change handlers
+  document.getElementById("s1-time").addEventListener("change", function() {
+    document.getElementById("s1-tcw").style.display = this.value === "custom" ? "block" : "none";
+    calcPreview();
+  });
+  document.getElementById("s2-time").addEventListener("change", function() {
+    document.getElementById("s2-tcw").style.display = this.value === "custom" ? "block" : "none";
+    calcResult();
+  });
+
+  // Live validation clear
+  ["s1-team","s1-name","s1-title"].forEach(function(id) {
+    var el = document.getElementById(id);
+    el.addEventListener(el.tagName === "SELECT" ? "change" : "input", function() {
+      this.classList.remove("invalid");
+      var err = document.getElementById("err-" + id);
+      if (err) err.classList.remove("show");
+    });
+  });
+  var sa = document.getElementById("s2-actual");
+  sa.addEventListener("input", function() {
+    this.classList.remove("invalid");
+    document.getElementById("err-s2-actual").classList.remove("show");
+    calcResult();
+  });
+})();
+</script>
+</body>
+</html>
