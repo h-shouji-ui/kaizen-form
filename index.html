@@ -539,7 +539,7 @@ textarea.form-control{min-height:88px;resize:vertical}
 </div>
 
 <div id="tab-panel-4">
-  <div class="ticker"><span>🔥 最新：仙台港ベース「フォークリフト動線改善」で 月42,000円削減！　🏅 今週の新着5件　📢 3センター逆転なるか！？　✨ 本社が今月首位をキープ中！　</span></div>
+  <div class="ticker"><span>🌱 カイゼン活動スタート！　📝 着手登録から始めましょう　🏆 4チーム対抗戦 集計中　✨ みんなの改善が会社の力になります　</span></div>
   <div class="rk-wrapper">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem">
       <span class="live-badge"><span class="live-dot"></span> リアルタイム更新中</span>
@@ -628,36 +628,28 @@ function getPreviousTerms() {
 
 // ===== DEMO DATA =====
 var DEMO = {
-  // current term (live)
   cur: {
-    teams:[{name:"本社",score:187400,cases:8,done:5},{name:"仙台港ベース",score:142000,cases:6,done:4},{name:"3センター",score:98500,cases:5,done:3},{name:"定禅寺",score:74200,cases:4,done:2}],
-    total:502100,cases:23,done:14,hours:187, confirmed:false
+    teams:[{name:"本社",score:0,cases:0,done:0},{name:"仙台港ベース",score:0,cases:0,done:0},{name:"3センター",score:0,cases:0,done:0},{name:"定禅寺",score:0,cases:0,done:0}],
+    total:0,cases:0,done:0,hours:0, confirmed:false
   },
-  // past terms (sealed results)
   t1: {
-    teams:[{name:"仙台港ベース",score:412000,cases:18,done:14},{name:"本社",score:387400,cases:16,done:12},{name:"3センター",score:298000,cases:13,done:10},{name:"定禅寺",score:201200,cases:11,done:8}],
-    total:1298600,cases:58,done:44,hours:512, confirmed:true
+    teams:[{name:"本社",score:0,cases:0,done:0},{name:"仙台港ベース",score:0,cases:0,done:0},{name:"3センター",score:0,cases:0,done:0},{name:"定禅寺",score:0,cases:0,done:0}],
+    total:0,cases:0,done:0,hours:0, confirmed:true
   },
   t2: {
-    teams:[{name:"本社",score:524000,cases:22,done:18},{name:"3センター",score:398500,cases:17,done:14},{name:"仙台港ベース",score:312000,cases:14,done:11},{name:"定禅寺",score:241200,cases:12,done:9}],
-    total:1475700,cases:65,done:52,hours:604, confirmed:true
+    teams:[{name:"本社",score:0,cases:0,done:0},{name:"仙台港ベース",score:0,cases:0,done:0},{name:"3センター",score:0,cases:0,done:0},{name:"定禅寺",score:0,cases:0,done:0}],
+    total:0,cases:0,done:0,hours:0, confirmed:true
   },
   t3: {
-    teams:[{name:"3センター",score:487500,cases:21,done:18},{name:"仙台港ベース",score:451000,cases:20,done:17},{name:"本社",score:387400,cases:16,done:13},{name:"定禅寺",score:298000,cases:13,done:11}],
-    total:1623900,cases:70,done:59,hours:712, confirmed:true
+    teams:[{name:"本社",score:0,cases:0,done:0},{name:"仙台港ベース",score:0,cases:0,done:0},{name:"3センター",score:0,cases:0,done:0},{name:"定禅寺",score:0,cases:0,done:0}],
+    total:0,cases:0,done:0,hours:0, confirmed:true
   },
   all: {
-    teams:[{name:"本社",score:3240000,cases:120,done:105},{name:"仙台港ベース",score:2987000,cases:112,done:98},{name:"3センター",score:2412000,cases:95,done:82},{name:"定禅寺",score:1987000,cases:84,done:72}],
-    total:10626000,cases:411,done:357,hours:4820, confirmed:false
+    teams:[{name:"本社",score:0,cases:0,done:0},{name:"仙台港ベース",score:0,cases:0,done:0},{name:"3センター",score:0,cases:0,done:0},{name:"定禅寺",score:0,cases:0,done:0}],
+    total:0,cases:0,done:0,hours:0, confirmed:false
   }
 };
-var ACTS=[
-  {type:"done",team:"仙台港ベース",title:"フォークリフト動線改善",time:"5分前",score:42000},
-  {type:"new", team:"本社",         title:"会議室予約システム改善",time:"23分前",score:null},
-  {type:"done",team:"3センター",    title:"検品ラベル貼り付け治具",time:"1時間前",score:18500},
-  {type:"new", team:"定禅寺",       title:"日報デジタル化",         time:"2時間前",score:null},
-  {type:"done",team:"本社",         title:"在庫棚番整理プロジェクト",time:"昨日", score:63000}
-];
+var ACTS=[];
 var MEDALS=["🥈","🥉","4️⃣"];
 var RCL=["r2","r3","r4"];
 var curPeriod="cur";
@@ -684,13 +676,13 @@ function renderRanking(p) {
   buildTermBanner(p);
   var d = DEMO[p];
   var s = d.teams.slice().sort(function(a,b){ return b.score - a.score; });
-  var top = s[0], rest = s.slice(1), mx = top.score;
+  var top = s[0], rest = s.slice(1), mx = top.score || 1;
   var conf = document.getElementById("rk-confirmed");
   conf.innerHTML = d.confirmed ? "<div class='confirmed-ribbon'>🏆 確定結果</div>" : "";
-  document.getElementById("rk-1name").textContent = top.name;
+  document.getElementById("rk-1name").textContent = d.total > 0 ? top.name : "まだ登録がありません";
   document.getElementById("rk-1score").textContent = fmt(top.score);
   document.getElementById("rk-1unit").textContent = d.confirmed ? "円" : "円（暫定）";
-  document.getElementById("rk-1sub").textContent  = d.confirmed ? "削減額合計（確定）" : "削減額合計（集計中）";
+  document.getElementById("rk-1sub").textContent  = d.total > 0 ? (d.confirmed ? "削減額合計（確定）" : "削減額合計（集計中）") : "着手登録をして最初の一歩を！";
   document.getElementById("rk-1cases").textContent = "登録 " + top.cases + "件 / 完了 " + top.done + "件";
   var list = document.getElementById("rk-list"); list.innerHTML = "";
   rest.forEach(function(t, i) {
@@ -719,6 +711,9 @@ function renderRanking(p) {
   document.getElementById("st-done").innerHTML  = fmt(d.done)  + "<span class='sc-unit'>件</span>";
   document.getElementById("st-hours").innerHTML = fmt(d.hours) + "<span class='sc-unit'>時間</span>";
   var al = document.getElementById("act-list"); al.innerHTML = "";
+  if (ACTS.length === 0) {
+    al.innerHTML = "<div style='text-align:center;padding:1.5rem;color:var(--km);font-size:13px'>📭 まだ活動がありません。<br>着手登録から始めましょう！</div>";
+  }
   ACTS.forEach(function(a){
     var div = document.createElement("div"); div.className = "act-row";
     div.innerHTML =
@@ -1155,11 +1150,7 @@ function loadKaishiForKanryo() {
 }
 
 // ── まとめページレンダリング ──
-var DEMO_SUMMARY = [
-  {id:"C_001",date:"2025/06/10 14:32",kaishiId:"K_001",team:"本社",name:"山田 太郎",title:"部品棚の配置変更",timeSave:54000,costSave:30000,total:76500,appeal:"腰への負担も軽減。他ラインへの展開も検討中。"},
-  {id:"C_002",date:"2025/06/08 10:15",kaishiId:"K_002",team:"仙台港ベース",name:"佐藤 花子",title:"フォークリフト動線改善",timeSave:108000,costSave:0,total:100000,appeal:"通路の安全性も向上しました。"},
-  {id:"C_003",date:"2025/06/05 16:45",kaishiId:"K_003",team:"3センター",name:"鈴木 一郎",title:"検品ラベル貼り付け治具",timeSave:27000,costSave:0,total:18500,appeal:"ミスが激減し品質も改善。"}
-];
+var DEMO_SUMMARY = [];
 
 function renderSummary(list) {
   document.getElementById("sum-loading").style.display = "none";
