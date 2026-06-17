@@ -145,6 +145,16 @@ textarea.form-control{min-height:88px;resize:vertical}
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--kpm)}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
 .live-dot{animation:pulse 1.8s ease-in-out infinite}
+/* Summary card */
+.sum-card{background:#fff;border-radius:14px;border:1px solid var(--kb);margin-bottom:.8rem;overflow:hidden}
+.sum-card-head{background:var(--kpl);padding:.65rem 1rem;display:flex;justify-content:space-between;align-items:center}
+.sum-card-title{font-size:14px;font-weight:700;color:var(--kt)}
+.sum-card-team{font-size:11.5px;font-weight:600;background:var(--kp);color:#fff;padding:2px 10px;border-radius:20px}
+.sum-card-body{padding:.85rem 1rem}
+.sum-meta{font-size:12px;color:var(--km);margin-bottom:.5rem}
+.sum-score{font-size:22px;font-weight:700;color:var(--kp)}
+.sum-score-unit{font-size:12px;color:var(--km);margin-left:3px}
+.sum-appeal{font-size:13px;color:var(--kt);margin-top:.4rem;padding:.5rem .7rem;background:#f7fdfb;border-radius:8px;border-left:3px solid var(--kp)}
 
 /* Term banner */
 .term-banner{border-radius:14px;padding:.9rem 1.1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.5rem}
@@ -189,10 +199,11 @@ textarea.form-control{min-height:88px;resize:vertical}
   <p>現場の気づきを、会社の力に変えよう</p>
 </div>
 
-<div class="tab-switcher">
+<div class="tab-switcher" style="grid-template-columns:1fr 1fr 1fr 1fr">
   <button class="tab-btn" id="tab1-btn"><span class="t-ic">📝</span><span>①着手登録</span></button>
   <button class="tab-btn" id="tab2-btn"><span class="t-ic">✅</span><span>②完了報告</span></button>
-  <button class="tab-btn" id="tab3-btn"><span class="t-ic">🏆</span><span>対抗戦<br>ランキング</span></button>
+  <button class="tab-btn" id="tab3-btn"><span class="t-ic">📋</span><span>まとめ</span></button>
+  <button class="tab-btn" id="tab4-btn"><span class="t-ic">🏆</span><span>ランキング</span></button>
 </div>
 
 <div id="tab-panel-1"><div class="fw">
@@ -337,7 +348,22 @@ textarea.form-control{min-height:88px;resize:vertical}
 </div></div>
 
 <div id="tab-panel-2"><div class="fw">
-  <div class="info-banner">🎉 お疲れさまです！改善の成果を記録して、削減効果を確定させましょう。</div>
+  <div class="info-banner">🎉 お疲れさまです！まず対象の着手案件を選んでから完了内容を入力してください。</div>
+
+  <!-- 着手案件選択 -->
+  <div class="sc">
+    <div class="sh"><span class="si">📎</span><span class="st">完了する着手案件を選択</span></div>
+    <div class="sb">
+      <div class="mb-f">
+        <label class="fl" for="s2-kaishi-select">着手登録済みの案件</label>
+        <span class="fh">①着手登録で入力したチーム・氏名と一致する案件が表示されます</span>
+        <select class="form-select" id="s2-kaishi-select">
+          <option value="">— まず①着手登録のチーム・氏名を入力してください —</option>
+        </select>
+      </div>
+      <button class="submit-btn" style="font-size:14px;padding:.7rem;margin-top:0" onclick="loadKaishiForKanryo()">🔄 案件を読み込む</button>
+    </div>
+  </div>
   <div class="sc">
     <div class="sh"><span class="si">📷</span><span class="st">改善後の写真</span></div>
     <div class="sb">
@@ -468,7 +494,51 @@ textarea.form-control{min-height:88px;resize:vertical}
   </button>
 </div></div>
 
+
 <div id="tab-panel-3">
+  <div class="fw">
+    <div class="info-banner">📋 完了報告済みの取り組み一覧です。チームと氏名で絞り込めます。</div>
+
+    <!-- フィルター -->
+    <div class="sc">
+      <div class="sh"><span class="si">🔍</span><span class="st">絞り込み</span></div>
+      <div class="sb" style="display:flex;gap:.7rem;flex-wrap:wrap">
+        <div style="flex:1;min-width:120px">
+          <label class="fl" for="sum-team">チーム</label>
+          <select class="form-select" id="sum-team" onchange="loadSummary()">
+            <option value="">全チーム</option>
+            <option value="本社">本社</option>
+            <option value="定禅寺">定禅寺</option>
+            <option value="3センター">3センター</option>
+            <option value="仙台港ベース">仙台港ベース</option>
+          </select>
+        </div>
+        <div style="flex:1;min-width:120px;display:flex;align-items:flex-end">
+          <button class="submit-btn" style="font-size:14px;padding:.7rem" onclick="loadSummary()">再読み込み</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 合計スコア -->
+    <div class="stats-grid" id="sum-stats" style="display:none">
+      <div class="stat-card"><div class="sc-lbl">💰 合計削減額</div><div class="sc-val" id="sum-total-val">—</div></div>
+      <div class="stat-card"><div class="sc-lbl">✅ 完了件数</div><div class="sc-val" id="sum-done-val">—</div></div>
+    </div>
+
+    <!-- 一覧 -->
+    <div id="sum-list"></div>
+    <div id="sum-empty" style="text-align:center;padding:2rem;color:var(--km);display:none">
+      <div style="font-size:36px;margin-bottom:.5rem">📭</div>
+      <div>まだ完了報告がありません</div>
+    </div>
+    <div id="sum-loading" style="text-align:center;padding:2rem;color:var(--km)">
+      <div style="font-size:24px;margin-bottom:.5rem">⏳</div>
+      <div>読み込み中...</div>
+    </div>
+  </div>
+</div>
+
+<div id="tab-panel-4">
   <div class="ticker"><span>🔥 最新：仙台港ベース「フォークリフト動線改善」で 月42,000円削減！　🏅 今週の新着5件　📢 3センター逆転なるか！？　✨ 本社が今月首位をキープ中！　</span></div>
   <div class="rk-wrapper">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.8rem">
@@ -515,6 +585,12 @@ textarea.form-control{min-height:88px;resize:vertical}
 </div>
 
 <script>
+
+// ================================================================
+// ★ GASデプロイ後、以下のURLを書き換えてください
+// ================================================================
+var GAS_URL = "https://script.google.com/macros/s/AKfycbxC0Dy47BbG3LxWBIAk9RgOt6ZH9eEoKyp1O85dFFF9-NakFwsYTwm4jCBJsjvD_MUd/exec";
+// ================================================================
 
 // ===== TERM / PERIOD LOGIC =====
 // 3 terms per year: Term1 = Apr1-Jul31, Term2 = Aug1-Nov30, Term3 = Dec1-Mar31
@@ -591,14 +667,15 @@ function fmt(n){return Math.round(n).toLocaleString("ja-JP")}
 
 // ===== TAB SWITCHING =====
 function switchTab(n) {
-  for (var i = 1; i <= 3; i++) {
+  for (var i = 1; i <= 4; i++) {
     var panel = document.getElementById("tab-panel-" + i);
     var btn   = document.getElementById("tab" + i + "-btn");
     panel.style.display = (i === n) ? "block" : "none";
     panel.classList.toggle("active", i === n);
     btn.classList.toggle("active", i === n);
   }
-  if (n === 3) renderRanking(curPeriod);
+  if (n === 3) loadSummary();
+  if (n === 4) renderRanking(curPeriod);
   window.scrollTo(0, 0);
 }
 
@@ -871,32 +948,42 @@ function submitForm(n){
     if(fe) fe.scrollIntoView({behavior:"smooth",block:"center"});
     return;
   }
-  var icon=document.getElementById("modal-icon");
-  var title=document.getElementById("modal-title");
-  var body=document.getElementById("modal-body");
-  var scoreArea=document.getElementById("modal-score-area");
-  var rankBtn=document.getElementById("modal-rank-btn");
   if(n===1){
-    icon.textContent="📝";
-    title.textContent="着手登録が完了しました！";
-    body.textContent="改善への第一歩を踏み出しましたね。改善が完了したら「②完了報告」タブから結果を入力しましょう。";
-    scoreArea.style.display="none";
-    rankBtn.style.display="none";
+    var data={
+      team:     document.getElementById("s1-team").value,
+      name:     document.getElementById("s1-name").value,
+      dept:     document.getElementById("s1-dept").value,
+      title:    document.getElementById("s1-title").value,
+      content:  document.getElementById("s1-content").value,
+      timeBefore:     document.getElementById("s1-time").value,
+      freqBefore:     document.getElementById("s1-freq").value,
+      costBefore:     document.getElementById("s1-cost").value,
+      costFreqBefore: document.getElementById("s1-costfreq").value,
+      planCost:       document.getElementById("s1-plancost").value
+    };
+    if(GAS_URL.indexOf("YOUR_SCRIPT_ID")!==-1){ showModal(1,null); return; }
+    submitKaishi(data);
   } else {
-    var total=prevAmt;
-    icon.textContent=total>0?"🎉":"✅";
-    title.textContent="完了報告を送信しました！";
-    if(total>0){
-      body.textContent="素晴らしい改善です！チームのスコアが更新されました。";
-      document.getElementById("modal-score").textContent=fmt(total);
-      scoreArea.style.display="block";
-    } else {
-      body.textContent="お疲れさまでした。改善活動の完了を記録しました。";
-      scoreArea.style.display="none";
-    }
-    rankBtn.style.display="block";
+    var sel = document.getElementById("s2-kaishi-select");
+    var kaishiId = sel ? sel.value : "";
+    var data2={
+      kaishiId:     kaishiId,
+      team:         document.getElementById("s1-team").value,
+      name:         document.getElementById("s1-name").value,
+      timeBefore:   document.getElementById("s1-time").value,
+      freqBefore:   document.getElementById("s1-freq").value,
+      costBefore:   document.getElementById("s1-cost").value,
+      costFreqBefore: document.getElementById("s1-costfreq").value,
+      timeAfter:    document.getElementById("s2-time").value,
+      freqAfter:    document.getElementById("s2-freq").value,
+      costAfter:    document.getElementById("s2-cost").value,
+      costFreqAfter:document.getElementById("s2-costfreq").value,
+      actualCost:   document.getElementById("s2-actual").value,
+      appeal:       document.getElementById("s2-appeal").value
+    };
+    if(GAS_URL.indexOf("YOUR_SCRIPT_ID")!==-1){ showModal(2,prevAmt); return; }
+    submitKanryo(data2);
   }
-  document.getElementById("modal").classList.add("show");
 }
 function closeModal(){document.getElementById("modal").classList.remove("show")}
 function closeModalOutside(e){if(e.target===document.getElementById("modal")) closeModal()}
@@ -967,23 +1054,196 @@ function selectTimeChip(container, chip, hiddenId, val, customWrapId, calcFn) {
   if (calcFn) calcFn();
 }
 
+// ===== GAS CONNECT =====
+function gasGet(params, callback) {
+  var url = GAS_URL + "?" + Object.keys(params).map(function(k){
+    return encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
+  }).join("&");
+  fetch(url)
+    .then(function(r){ return r.json(); })
+    .then(callback)
+    .catch(function(){ callback({status:"error"}); });
+}
+
+function gasPost(data, callback) {
+  fetch(GAS_URL, {
+    method: "POST",
+    body: JSON.stringify(data)
+  })
+  .then(function(r){ return r.json(); })
+  .then(callback)
+  .catch(function(){ callback({status:"error"}); });
+}
+
+// ── 着手登録送信 ──
+function submitKaishi(formData) {
+  gasPost(Object.assign({action:"saveKaishi"}, formData), function(res) {
+    if (res.status === "ok") {
+      showModal(1, null);
+    } else {
+      alert("送信に失敗しました。GAS_URLを確認してください。");
+    }
+  });
+}
+
+// ── 完了報告送信 ──
+function submitKanryo(formData) {
+  gasPost(Object.assign({action:"saveKanryo"}, formData), function(res) {
+    if (res.status === "ok") {
+      showModal(2, res.total);
+    } else {
+      alert("送信に失敗しました。GAS_URLを確認してください。");
+    }
+  });
+}
+
+// ── まとめページ読み込み ──
+function loadSummary() {
+  var team = document.getElementById("sum-team").value;
+  document.getElementById("sum-loading").style.display = "block";
+  document.getElementById("sum-list").innerHTML = "";
+  document.getElementById("sum-empty").style.display = "none";
+  document.getElementById("sum-stats").style.display = "none";
+
+  var params = {action:"getKanryo"};
+  if (team) params.team = team;
+
+  // GAS未設定の場合はデモデータ表示
+  if (GAS_URL.indexOf("YOUR_SCRIPT_ID") !== -1) {
+    setTimeout(function(){ renderSummary(DEMO_SUMMARY); }, 500);
+    return;
+  }
+
+  gasGet(params, function(res) {
+    if (res.status === "ok") renderSummary(res.list);
+    else document.getElementById("sum-loading").style.display = "none";
+  });
+}
+
+// ── ② 完了報告：着手一覧を取得して選択肢を表示 ──
+function loadKaishiForKanryo() {
+  var team = document.getElementById("s1-team").value;
+  var name = document.getElementById("s1-name").value;
+  var sel  = document.getElementById("s2-kaishi-select");
+  if (!sel) return;
+
+  sel.innerHTML = "<option value=''>— 読み込み中 —</option>";
+
+  // GAS未設定の場合はデモ
+  if (GAS_URL.indexOf("YOUR_SCRIPT_ID") !== -1) {
+    sel.innerHTML = "<option value=''>— GAS未接続（デモモード）—</option>";
+    return;
+  }
+
+  var params = {action:"getKaishi"};
+  if (team) params.team = team;
+  if (name) params.name = name;
+  gasGet(params, function(res) {
+    sel.innerHTML = "<option value=''>— 案件を選択してください —</option>";
+    if (res.status === "ok" && res.list.length > 0) {
+      res.list.forEach(function(item) {
+        var opt = document.createElement("option");
+        opt.value = item.id;
+        opt.textContent = item.title + "（" + item.name + "・" + item.date.substr(0,10) + "）";
+        opt.dataset.item = JSON.stringify(item);
+        sel.appendChild(opt);
+      });
+    } else {
+      sel.innerHTML = "<option value=''>未完了の着手登録がありません</option>";
+    }
+  });
+}
+
+// ── まとめページレンダリング ──
+var DEMO_SUMMARY = [
+  {id:"C_001",date:"2025/06/10 14:32",kaishiId:"K_001",team:"本社",name:"山田 太郎",title:"部品棚の配置変更",timeSave:54000,costSave:30000,total:76500,appeal:"腰への負担も軽減。他ラインへの展開も検討中。"},
+  {id:"C_002",date:"2025/06/08 10:15",kaishiId:"K_002",team:"仙台港ベース",name:"佐藤 花子",title:"フォークリフト動線改善",timeSave:108000,costSave:0,total:100000,appeal:"通路の安全性も向上しました。"},
+  {id:"C_003",date:"2025/06/05 16:45",kaishiId:"K_003",team:"3センター",name:"鈴木 一郎",title:"検品ラベル貼り付け治具",timeSave:27000,costSave:0,total:18500,appeal:"ミスが激減し品質も改善。"}
+];
+
+function renderSummary(list) {
+  document.getElementById("sum-loading").style.display = "none";
+  var container = document.getElementById("sum-list");
+  container.innerHTML = "";
+
+  if (!list || list.length === 0) {
+    document.getElementById("sum-empty").style.display = "block";
+    return;
+  }
+
+  var grandTotal = 0;
+  list.forEach(function(item) {
+    grandTotal += parseFloat(item.total) || 0;
+    var div = document.createElement("div");
+    div.className = "sum-card";
+    div.innerHTML =
+      "<div class='sum-card-head'>" +
+        "<div class='sum-card-title'>" + item.title + "</div>" +
+        "<div class='sum-card-team'>" + item.team + "</div>" +
+      "</div>" +
+      "<div class='sum-card-body'>" +
+        "<div class='sum-meta'>" + item.name + "　" + (item.date||"").substr(0,10) + " 完了</div>" +
+        "<div>" +
+          "<span class='sum-score'>" + fmt(item.total) + "</span>" +
+          "<span class='sum-score-unit'>円/月 削減</span>" +
+        "</div>" +
+        (item.appeal ? "<div class='sum-appeal'>💬 " + item.appeal + "</div>" : "") +
+      "</div>";
+    container.appendChild(div);
+  });
+
+  document.getElementById("sum-stats").style.display = "grid";
+  document.getElementById("sum-total-val").innerHTML = fmt(grandTotal) + "<span class='sc-unit'>円/月</span>";
+  document.getElementById("sum-done-val").innerHTML = list.length + "<span class='sc-unit'>件</span>";
+}
+
+// ── モーダル表示を関数化 ──
+function showModal(tabNum, total) {
+  var icon  = document.getElementById("modal-icon");
+  var title = document.getElementById("modal-title");
+  var body  = document.getElementById("modal-body");
+  var sa    = document.getElementById("modal-score-area");
+  var rb    = document.getElementById("modal-rank-btn");
+  if (tabNum === 1) {
+    icon.textContent  = "📝";
+    title.textContent = "着手登録が完了しました！";
+    body.textContent  = "改善への第一歩を踏み出しましたね。完了したら「②完了報告」タブから結果を入力しましょう。";
+    sa.style.display  = "none";
+    rb.style.display  = "none";
+  } else {
+    icon.textContent  = total > 0 ? "🎉" : "✅";
+    title.textContent = "完了報告を送信しました！";
+    if (total > 0) {
+      body.textContent = "素晴らしい改善です！チームのスコアが更新されました。";
+      document.getElementById("modal-score").textContent = fmt(total);
+      sa.style.display = "block";
+    } else {
+      body.textContent = "お疲れさまでした。改善活動の完了を記録しました。";
+      sa.style.display = "none";
+    }
+    rb.style.display = "block";
+  }
+  document.getElementById("modal").classList.add("show");
+}
+
 // ===== INIT =====
 (function() {
   // Tab switching — pure inline style, no CSS class dependency
   function showTab(n) {
-    for (var i = 1; i <= 3; i++) {
+    for (var i = 1; i <= 4; i++) {
       var panel = document.getElementById("tab-panel-" + i);
       var btn   = document.getElementById("tab" + i + "-btn");
       panel.style.display = (i === n) ? "block" : "none";
       btn.classList.toggle("active", i === n);
     }
-    if (n === 3) renderRanking(curPeriod);
+    if (n === 3) loadSummary();
+  if (n === 4) renderRanking(curPeriod);
     window.scrollTo(0, 0);
   }
 
   // Override global switchTab and goToRanking to use showTab
   window.switchTab = showTab;
-  window.goToRanking = function() { closeModal(); showTab(3); };
+  window.goToRanking = function() { closeModal(); showTab(4); };
 
   // Bind buttons with both touchend and click for maximum compatibility
   function bindTab(btnId, tabNum) {
@@ -1002,6 +1262,7 @@ function selectTimeChip(container, chip, hiddenId, val, customWrapId, calcFn) {
   bindTab("tab1-btn", 1);
   bindTab("tab2-btn", 2);
   bindTab("tab3-btn", 3);
+  bindTab("tab4-btn", 4);
 
   // Show tab 1 on load
   showTab(1);
