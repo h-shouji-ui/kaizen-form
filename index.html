@@ -98,15 +98,15 @@ textarea.form-control{min-height:88px;resize:vertical}
 .period-sw{display:flex;background:#fff;border-radius:12px;border:1px solid var(--kb);overflow:hidden;margin-bottom:1.1rem}
 .period-btn{flex:1;border:none;background:none;padding:.6rem .5rem;font-size:13px;font-weight:600;color:var(--km);cursor:pointer;transition:background .15s,color .15s}
 .period-btn.active{background:var(--kp);color:#fff}
-.rank-hero{background:linear-gradient(135deg,#0a6858 0%,#0d8c74 100%);border-radius:18px;padding:1.4rem 1.2rem 1.5rem;margin-bottom:1rem;text-align:center;position:relative;overflow:hidden}
-.rh-crown{font-size:36px;line-height:1;margin-bottom:.2rem}
-.rh-name{font-size:24px;font-weight:700;color:#fff;margin-bottom:.2rem}
-.rh-score{font-size:38px;font-weight:700;color:var(--kg);letter-spacing:-1px;line-height:1.1}
-.rh-unit{font-size:16px;font-weight:600;color:rgba(255,255,255,.8);margin-left:2px}
-.rh-sub{font-size:13px;color:rgba(255,255,255,.7);margin-top:.3rem}
-.rh-cases{display:inline-block;background:rgba(255,255,255,.15);border-radius:20px;padding:4px 14px;font-size:12px;color:#fff;margin-top:.5rem;font-weight:600}
-@keyframes crownPulse{0%,100%{transform:scale(1) rotate(-5deg)}50%{transform:scale(1.15) rotate(5deg)}}
-.crown-anim{display:inline-block;animation:crownPulse 2.5s ease-in-out infinite}
+
+
+
+
+
+
+
+50%{transform:scale(1.15) rotate(5deg)}}
+
 .rank-list{display:flex;flex-direction:column;gap:.65rem;margin-bottom:1rem}
 .rank-row{background:#fff;border-radius:14px;border:1px solid var(--kb);padding:.8rem 1rem;display:flex;align-items:center;gap:.85rem;position:relative;overflow:hidden}
 .rank-row::before{content:'';position:absolute;left:0;top:0;bottom:0;width:4px}
@@ -145,6 +145,35 @@ textarea.form-control{min-height:88px;resize:vertical}
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--kpm)}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
 .live-dot{animation:pulse 1.8s ease-in-out infinite}
+/* 4チーム全表示グリッド */
+.teams-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:1rem}
+.team-card{background:#fff;border-radius:14px;border:1.5px solid var(--kb);overflow:hidden;position:relative}
+.team-card.rank1{border-color:var(--kg);box-shadow:0 0 0 2px rgba(240,165,0,.3)}
+.team-card.rank2{border-color:#b0bec5}
+.team-card.rank3{border-color:#ce9b5a}
+.team-card.rank4{border-color:#a8d5c8}
+.tc-head{padding:.55rem .75rem;display:flex;align-items:center;justify-content:space-between}
+.team-card.rank1 .tc-head{background:linear-gradient(135deg,#0a6858,#0d8c74)}
+.team-card.rank2 .tc-head{background:#eceff1}
+.team-card.rank3 .tc-head{background:#fdf3e7}
+.team-card.rank4 .tc-head{background:#e0f2ee}
+.tc-rank{font-size:20px;line-height:1}
+.tc-name{font-size:13px;font-weight:700}
+.team-card.rank1 .tc-name{color:#fff}
+.team-card.rank2 .tc-name{color:#546e7a}
+.team-card.rank3 .tc-name{color:#8d5524}
+.team-card.rank4 .tc-name{color:var(--kp)}
+.tc-body{padding:.65rem .75rem}
+.tc-score{font-size:20px;font-weight:700;color:var(--kp);line-height:1}
+.team-card.rank1 .tc-score{color:var(--kg)}
+.tc-unit{font-size:10px;color:var(--km);margin-left:2px}
+.tc-cases{font-size:11px;color:var(--km);margin-top:4px}
+.tc-bar-wrap{margin-top:6px}
+.tc-bar{height:5px;background:#e8f0ee;border-radius:4px;overflow:hidden}
+.tc-bar-fill{height:100%;border-radius:4px;background:var(--kp);transition:width .8s cubic-bezier(.25,.46,.45,.94)}
+.team-card.rank1 .tc-bar-fill{background:var(--kg)}
+.team-card.rank2 .tc-bar-fill{background:#90a4ae}
+.team-card.rank3 .tc-bar-fill{background:#ce9b5a}
 /* Summary card */
 .sum-card{background:#fff;border-radius:14px;border:1px solid var(--kb);margin-bottom:.8rem;overflow:hidden}
 .sum-card-head{background:var(--kpl);padding:.65rem 1rem;display:flex;justify-content:space-between;align-items:center}
@@ -548,15 +577,8 @@ textarea.form-control{min-height:88px;resize:vertical}
     <!-- 期カウントダウンバナー -->
     <div class="term-banner" id="term-banner"></div>
     <div class="period-sw" id="period-sw"></div>
-    <div class="rank-hero">
-      <div id="rk-confirmed"></div>
-      <div class="rh-crown"><span class="crown-anim">👑</span></div>
-      <div class="rh-name" id="rk-1name">—</div>
-      <div><span class="rh-score" id="rk-1score">—</span><span class="rh-unit" id="rk-1unit">円</span></div>
-      <div class="rh-sub" id="rk-1sub">削減額合計</div>
-      <div class="rh-cases" id="rk-1cases">—</div>
-    </div>
-    <div class="rank-list" id="rk-list"></div>
+    <div id="rk-confirmed"></div>
+    <div class="teams-grid" id="rk-grid"></div>
     <div class="sec-ttl">全社 総合スコア</div>
     <div class="stats-grid">
       <div class="stat-card"><div class="sc-lbl">💰 累計削減額</div><div class="sc-val" id="st-total">—</div></div>
@@ -676,33 +698,33 @@ function renderRanking(p) {
   buildTermBanner(p);
   var d = DEMO[p];
   var s = d.teams.slice().sort(function(a,b){ return b.score - a.score; });
-  var top = s[0], rest = s.slice(1), mx = top.score || 1;
+  var mx = s[0].score || 1;
+  var rankClasses = ["rank1","rank2","rank3","rank4"];
+  var rankIcons   = ["👑","🥈","🥉","4️⃣"];
   var conf = document.getElementById("rk-confirmed");
   conf.innerHTML = d.confirmed ? "<div class='confirmed-ribbon'>🏆 確定結果</div>" : "";
-  document.getElementById("rk-1name").textContent = d.total > 0 ? top.name : "まだ登録がありません";
-  document.getElementById("rk-1score").textContent = fmt(top.score);
-  document.getElementById("rk-1unit").textContent = d.confirmed ? "円" : "円（暫定）";
-  document.getElementById("rk-1sub").textContent  = d.total > 0 ? (d.confirmed ? "削減額合計（確定）" : "削減額合計（集計中）") : "着手登録をして最初の一歩を！";
-  document.getElementById("rk-1cases").textContent = "登録 " + top.cases + "件 / 完了 " + top.done + "件";
-  var list = document.getElementById("rk-list"); list.innerHTML = "";
-  rest.forEach(function(t, i) {
+
+  var grid = document.getElementById("rk-grid"); grid.innerHTML = "";
+  s.forEach(function(t, i) {
     var pct = Math.round(t.score / mx * 100);
-    var div = document.createElement("div"); div.className = "rank-row " + RCL[i];
+    var div = document.createElement("div");
+    div.className = "team-card " + rankClasses[i];
     div.innerHTML =
-      "<div class='rr-medal'>" + MEDALS[i] + "</div>" +
-      "<div class='rr-info'>" +
-        "<div class='rr-name'>" + t.name + "</div>" +
-        "<div class='rr-detail'>登録 " + t.cases + "件 / 完了 " + t.done + "件</div>" +
-        "<div class='prog-wrap'>" +
-          "<div class='prog-label'><span>首位比 " + pct + "%</span><span>" + fmt(mx - t.score) + "円差</span></div>" +
-          "<div class='prog-bar'><div class='prog-fill' style='width:0%' data-target='" + pct + "'></div></div>" +
-        "</div>" +
+      "<div class='tc-head'>" +
+        "<span class='tc-rank'>" + rankIcons[i] + "</span>" +
+        "<span class='tc-name'>" + t.name + "</span>" +
       "</div>" +
-      "<div class='rr-right'><div class='rr-score'>" + fmt(t.score) + "</div><div class='rr-unit'>円</div></div>";
-    list.appendChild(div);
+      "<div class='tc-body'>" +
+        "<div class='tc-score'>" + fmt(t.score) + "<span class='tc-unit'>円</span></div>" +
+        "<div class='tc-cases'>登録 " + t.cases + "件 / 完了 " + t.done + "件</div>" +
+        "<div class='tc-bar-wrap'>" +
+          "<div class='tc-bar'><div class='tc-bar-fill' style='width:0%' data-target='" + pct + "'></div></div>" +
+        "</div>" +
+      "</div>";
+    grid.appendChild(div);
   });
   setTimeout(function(){
-    document.querySelectorAll(".prog-fill[data-target]").forEach(function(el){
+    document.querySelectorAll(".tc-bar-fill[data-target]").forEach(function(el){
       el.style.width = el.getAttribute("data-target") + "%";
     });
   }, 80);
