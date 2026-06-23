@@ -145,6 +145,30 @@ textarea.form-control{min-height:88px;resize:vertical}
 .live-dot{width:7px;height:7px;border-radius:50%;background:var(--kpm)}
 @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.4)}}
 .live-dot{animation:pulse 1.8s ease-in-out infinite}
+/* 詳細モーダル */
+.detail-backdrop{display:none;position:fixed;inset:0;background:rgba(10,40,35,.6);z-index:9999;align-items:flex-end;justify-content:center}
+.detail-backdrop.show{display:flex}
+.detail-sheet{background:#fff;border-radius:20px 20px 0 0;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;padding:1.2rem 1.2rem 2rem;animation:slideUp .3s ease}
+@keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.detail-handle{width:40px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 1rem}
+.detail-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;gap:.5rem}
+.detail-title{font-size:17px;font-weight:700;color:var(--kt);flex:1;line-height:1.4}
+.detail-close{width:32px;height:32px;border-radius:50%;border:none;background:#f0f4f3;color:var(--km);font-size:18px;cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center}
+.detail-team-badge{display:inline-block;background:var(--kp);color:#fff;font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px;margin-bottom:.8rem}
+.detail-meta{font-size:13px;color:var(--km);margin-bottom:1rem}
+.detail-section{margin-bottom:1rem}
+.detail-section-title{font-size:11.5px;font-weight:700;color:var(--km);letter-spacing:.06em;text-transform:uppercase;margin-bottom:.5rem;padding-bottom:.3rem;border-bottom:1px solid #edf4f2}
+.detail-row{display:flex;justify-content:space-between;align-items:baseline;padding:.4rem 0;font-size:14px;border-bottom:1px solid #f5f5f5}
+.detail-row:last-child{border-bottom:none}
+.detail-row-label{color:var(--km)}
+.detail-row-val{font-weight:600;color:var(--kt)}
+.detail-total-box{background:linear-gradient(135deg,#0a6858,#0d8c74);border-radius:14px;padding:1rem 1.2rem;text-align:center;margin:1rem 0}
+.detail-total-label{font-size:12px;color:rgba(255,255,255,.75);margin-bottom:3px}
+.detail-total-val{font-size:32px;font-weight:700;color:var(--kg)}
+.detail-total-unit{font-size:15px;color:rgba(255,255,255,.8);margin-left:3px}
+.detail-appeal{background:#f7fdfb;border-left:3px solid var(--kp);border-radius:0 8px 8px 0;padding:.7rem .9rem;font-size:14px;color:var(--kt);line-height:1.6;margin-top:.5rem}
+.sum-card{cursor:pointer;transition:box-shadow .15s}
+.sum-card:active{box-shadow:0 0 0 2px var(--kp)}
 /* 4チーム全表示グリッド */
 .teams-grid{display:grid;grid-template-columns:1fr 1fr;gap:.65rem;margin-bottom:1rem}
 .team-card{background:#fff;border-radius:14px;border:1.5px solid var(--kb);overflow:hidden;position:relative}
@@ -242,7 +266,7 @@ textarea.form-control{min-height:88px;resize:vertical}
     <div class="sb">
       <div class="mb-f">
         <label class="fl" for="s1-team">チーム<span class="req">*</span></label>
-        <select class="form-select" id="s1-team"><option value="">— 選択してください —</option><option value="honsha">本社</option><option value="jozenji">定禅寺</option><option value="3center">3センター</option><option value="sendaiport">仙台港ベース</option></select>
+        <select class="form-select" id="s1-team"><option value="">— 選択してください —</option><option value="本社">本社</option><option value="定禅寺">定禅寺</option><option value="3センター">3センター</option><option value="仙台港ベース">仙台港ベース</option></select>
         <div class="err-msg" id="err-s1-team">チームを選択してください</div>
       </div>
       <div class="mb-f">
@@ -534,7 +558,7 @@ textarea.form-control{min-height:88px;resize:vertical}
       <div class="sb" style="display:flex;gap:.7rem;flex-wrap:wrap">
         <div style="flex:1;min-width:120px">
           <label class="fl" for="sum-team">チーム</label>
-          <select class="form-select" id="sum-team" onchange="loadSummary()">
+          <select class="form-select" id="sum-team">
             <option value="">全チーム</option>
             <option value="本社">本社</option>
             <option value="定禅寺">定禅寺</option>
@@ -588,6 +612,53 @@ textarea.form-control{min-height:88px;resize:vertical}
     </div>
     <div class="sec-ttl" style="margin-top:.4rem">最近の活動</div>
     <div class="activity-list" id="act-list"></div>
+  </div>
+</div>
+
+<!-- 詳細モーダル -->
+<div class="detail-backdrop" id="detail-modal" onclick="closeDetailOutside(event)">
+  <div class="detail-sheet" onclick="event.stopPropagation()">
+    <div class="detail-handle"></div>
+    <div class="detail-header">
+      <div class="detail-title" id="dm-title">—</div>
+      <button class="detail-close" onclick="closeDetail()">✕</button>
+    </div>
+    <div class="detail-team-badge" id="dm-team">—</div>
+    <div class="detail-meta" id="dm-meta">—</div>
+
+    <!-- 改善内容 -->
+    <div class="detail-section" id="dm-content-wrap" style="display:none">
+      <div class="detail-section-title">改善内容</div>
+      <div id="dm-content" style="font-size:14px;color:var(--kt);line-height:1.6"></div>
+    </div>
+
+    <!-- 削減額サマリー -->
+    <div class="detail-total-box">
+      <div class="detail-total-label">確定削減額（月額）</div>
+      <div><span class="detail-total-val" id="dm-total">0</span><span class="detail-total-unit">円/月</span></div>
+    </div>
+
+    <!-- 内訳 -->
+    <div class="detail-section">
+      <div class="detail-section-title">削減額の内訳</div>
+      <div class="detail-row"><span class="detail-row-label">⏱ 時間削減額</span><span class="detail-row-val" id="dm-timesave">—</span></div>
+      <div class="detail-row"><span class="detail-row-label">💸 費用削減額</span><span class="detail-row-val" id="dm-costsave">—</span></div>
+      <div class="detail-row"><span class="detail-row-label">🔧 対策費用</span><span class="detail-row-val" id="dm-actual">—</span></div>
+    </div>
+
+    <!-- 改善前後比較 -->
+    <div class="detail-section">
+      <div class="detail-section-title">改善前 → 改善後</div>
+      <div class="detail-row"><span class="detail-row-label">作業時間（1回）</span><span class="detail-row-val" id="dm-time-compare">—</span></div>
+      <div class="detail-row"><span class="detail-row-label">月間回数</span><span class="detail-row-val" id="dm-freq-compare">—</span></div>
+      <div class="detail-row"><span class="detail-row-label">月額費用</span><span class="detail-row-val" id="dm-cost-compare">—</span></div>
+    </div>
+
+    <!-- アピールポイント -->
+    <div class="detail-section" id="dm-appeal-wrap" style="display:none">
+      <div class="detail-section-title">アピールポイント</div>
+      <div class="detail-appeal" id="dm-appeal"></div>
+    </div>
   </div>
 </div>
 
@@ -1071,6 +1142,66 @@ function selectTimeChip(container, chip, hiddenId, val, customWrapId, calcFn) {
   if (calcFn) calcFn();
 }
 
+// ===== DETAIL MODAL =====
+function openDetail(item) {
+  var mins = function(m){ return m >= 60 ? Math.floor(m/60)+"時間"+(m%60?m%60+"分":"") : m+"分"; };
+  var yen  = function(v){ return fmt(v)+"円"; };
+
+  document.getElementById("dm-title").textContent  = item.title || "—";
+  document.getElementById("dm-team").textContent   = item.team  || "—";
+  document.getElementById("dm-meta").textContent   = (item.name||"") + "　" + (item.date||"").substr(0,10) + " 完了";
+  document.getElementById("dm-total").textContent  = fmt(item.total || 0);
+
+  document.getElementById("dm-timesave").textContent = yen(item.timeSave || 0) + "/月";
+  document.getElementById("dm-costsave").textContent = yen(item.costSave || 0) + "/月";
+  document.getElementById("dm-actual").textContent   = "▲ " + yen(item.actualCost || 0);
+
+  // 改善前後比較
+  var tb = parseFloat(item.timeBefore) || 0;
+  var ta = parseFloat(item.timeAfter)  || 0;
+  var fb = parseFloat(item.freqBefore) || 0;
+  var fa = parseFloat(item.freqAfter)  || 0;
+  var cb = parseFloat(item.costBefore) || 0;
+  var ca = parseFloat(item.costAfter)  || 0;
+
+  document.getElementById("dm-time-compare").textContent =
+    (tb ? mins(tb) : "—") + " → " + (ta === 0 && item.timeAfter !== "" ? "0分" : (ta ? mins(ta) : "—"));
+  document.getElementById("dm-freq-compare").textContent =
+    (fb ? fb+"回/月" : "—") + " → " + (fa !== undefined && item.freqAfter !== "" ? fa+"回/月" : "—");
+  document.getElementById("dm-cost-compare").textContent =
+    (cb ? yen(cb) : "—") + " → " + (item.costAfter !== undefined && item.costAfter !== "" ? yen(ca) : "—");
+
+  // 改善内容
+  var contentWrap = document.getElementById("dm-content-wrap");
+  if (item.content) {
+    document.getElementById("dm-content").textContent = item.content;
+    contentWrap.style.display = "block";
+  } else {
+    contentWrap.style.display = "none";
+  }
+
+  // アピールポイント
+  var appealWrap = document.getElementById("dm-appeal-wrap");
+  if (item.appeal) {
+    document.getElementById("dm-appeal").textContent = item.appeal;
+    appealWrap.style.display = "block";
+  } else {
+    appealWrap.style.display = "none";
+  }
+
+  document.getElementById("detail-modal").classList.add("show");
+  document.body.style.overflow = "hidden";
+}
+
+function closeDetail() {
+  document.getElementById("detail-modal").classList.remove("show");
+  document.body.style.overflow = "";
+}
+
+function closeDetailOutside(e) {
+  if (e.target === document.getElementById("detail-modal")) closeDetail();
+}
+
 // ===== GAS CONNECT =====
 function gasGet(params, callback) {
   var url = GAS_URL + "?" + Object.keys(params).map(function(k){
@@ -1196,12 +1327,12 @@ function renderSummary(list) {
       "</div>" +
       "<div class='sum-card-body'>" +
         "<div class='sum-meta'>" + item.name + "　" + (item.date||"").substr(0,10) + " 完了</div>" +
-        "<div>" +
-          "<span class='sum-score'>" + fmt(item.total) + "</span>" +
-          "<span class='sum-score-unit'>円/月 削減</span>" +
+        "<div style='display:flex;justify-content:space-between;align-items:center'>" +
+          "<div><span class='sum-score'>" + fmt(item.total) + "</span><span class='sum-score-unit'>円/月 削減</span></div>" +
+          "<span style='font-size:12px;color:var(--kp);font-weight:600'>詳細 ›</span>" +
         "</div>" +
-        (item.appeal ? "<div class='sum-appeal'>💬 " + item.appeal + "</div>" : "") +
       "</div>";
+    (function(i){ div.addEventListener("click", function(){ openDetail(i); }); })(item);
     container.appendChild(div);
   });
 
